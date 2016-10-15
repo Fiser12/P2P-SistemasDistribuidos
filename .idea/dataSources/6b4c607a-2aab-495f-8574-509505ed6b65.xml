@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="Sqlite (Xerial) - trackerdb.db">
+  <database-model serializer="dbm" rdbms="SQLITE" format-version="2.6">
+    <schema id="1">
+      <visible>1</visible>
+    </schema>
+    <table id="2" parent="1" name="peer"/>
+    <table id="3" parent="1" name="peer_smarmses"/>
+    <table id="4" parent="1" name="smarms"/>
+    <column id="5" parent="2" name="PEER_ID">
+      <data-type>INTEGER(0,-1)|4</data-type>
+    </column>
+    <column id="6" parent="2" name="PEER_IP">
+      <mandatory>1</mandatory>
+      <data-type>VARCHAR(15)(0,-1)|12</data-type>
+    </column>
+    <column id="7" parent="2" name="PEER_PORT">
+      <mandatory>1</mandatory>
+      <data-type>INTEGER(0,-1)|4</data-type>
+    </column>
+    <key id="8" parent="2">
+      <columns>PEER_ID</columns>
+      <primary>1</primary>
+    </key>
+    <column id="9" parent="3" name="BYTES_DESCARGADOS">
+      <mandatory>1</mandatory>
+      <data-type>INTEGER(0,-1)|4</data-type>
+    </column>
+    <column id="10" parent="3" name="SMARMS_ID">
+      <data-type>VARCHAR(255)(0,-1)|12</data-type>
+    </column>
+    <column id="11" parent="3" name="PEER_ID">
+      <data-type>INTEGER(0,-1)|4</data-type>
+    </column>
+    <key id="12" parent="3">
+      <columns>PEER_ID
+SMARMS_ID</columns>
+      <primary>1</primary>
+    </key>
+    <column id="13" parent="4" name="SMARMS_ID">
+      <data-type>INTEGER(0,-1)|4</data-type>
+    </column>
+    <column id="14" parent="4" name="NAME">
+      <mandatory>1</mandatory>
+      <data-type>VARCHAR(10)(0,-1)|12</data-type>
+    </column>
+    <column id="15" parent="4" name="SMARMS_TAMANO">
+      <mandatory>1</mandatory>
+      <data-type>INTEGER(0,-1)|4</data-type>
+    </column>
+    <key id="16" parent="4">
+      <columns>SMARMS_ID</columns>
+      <primary>1</primary>
+    </key>
+  </database-model>
+</dataSource>

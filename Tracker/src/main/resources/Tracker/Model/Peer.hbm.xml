@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="Tracker.Model.Peer" table="peer">
+        <id name="idPeer" type="java.lang.Integer">
+            <column name="PEER_ID" />
+            <generator class="identity" />
+        </id>
+        <property name="ip" type="string">
+            <column name="PEER_IP" length="15" not-null="true" />
+        </property>
+        <property name="port" type="java.lang.Integer">
+            <column name="PEER_PORT" not-null="true" />
+        </property>
+        <set name="peerSmarmses" table="peer_smarmses" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="pk.peer" not-null="true" />
+            </key>
+            <one-to-many class="Tracker.Model.Peer" />
+        </set>
+    </class>
+</hibernate-mapping>
