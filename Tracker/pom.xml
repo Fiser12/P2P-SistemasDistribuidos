@@ -100,7 +100,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<mainClass>Tracker.main</mainClass>
+					<mainClass>Tracker.View.TrackerWindow</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>

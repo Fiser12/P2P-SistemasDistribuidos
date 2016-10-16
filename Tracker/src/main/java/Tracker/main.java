@@ -1,15 +1,18 @@
 package Tracker;
 
-import java.util.Date;
-
 import Tracker.Model.Peer;
 import Tracker.Model.PeerSmarms;
 import Tracker.Model.Smarms;
 import Tracker.Util.HibernateUtil;
 import org.hibernate.Session;
+import Tracker.View.TrackerWindow;
 
 public class main {
     public static void main(String[] args) {
+        TrackerWindow.launch(args);
+    }
+    public static void testBBDD()
+    {
         System.out.println("Hibernate many to many - join table + extra column (Annotation)");
         Session session = HibernateUtil.getSessionFactory().openSession();
 
@@ -32,5 +35,6 @@ public class main {
         session.save(smarms);
         session.getTransaction().commit();
         System.out.println("Done");
+
     }
 }
