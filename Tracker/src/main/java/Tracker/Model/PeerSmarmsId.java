@@ -2,7 +2,6 @@ package Tracker.Model;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-
 import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 
