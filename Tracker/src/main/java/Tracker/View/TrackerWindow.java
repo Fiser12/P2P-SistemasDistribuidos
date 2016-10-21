@@ -10,8 +10,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 
-public class TrackerWindow extends Application {
+public class TrackerWindow extends Application implements Observer {
 
     @Override
     public void start(Stage primaryStage) {
@@ -27,5 +29,9 @@ public class TrackerWindow extends Application {
     }
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public void update(Observable o, Object arg) {
+
     }
 }

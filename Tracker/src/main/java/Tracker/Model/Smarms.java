@@ -1,5 +1,8 @@
 package Tracker.Model;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +17,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "smarms")
-public class Smarms implements java.io.Serializable {
+public class Smarms implements java.io.Serializable, Observable {
 
 	private String smarmsId;
 	private String name;
@@ -29,7 +32,7 @@ public class Smarms implements java.io.Serializable {
 		this.tamanoEnBytes = tamanoEnBytes;
 	}
 
-	public Smarms(String name, String desc, Set<PeerSmarms> peerSmarmses) {
+	public Smarms(String name, Integer tamanoEnBytes, Set<PeerSmarms> peerSmarmses) {
 		this.name = name;
 		this.tamanoEnBytes = tamanoEnBytes;
 		this.peerSmarmses = peerSmarmses;
@@ -73,4 +76,11 @@ public class Smarms implements java.io.Serializable {
 		this.peerSmarmses = peerSmarmses;
 	}
 
+	public void addListener(InvalidationListener listener) {
+
+	}
+
+	public void removeListener(InvalidationListener listener) {
+
+	}
 }

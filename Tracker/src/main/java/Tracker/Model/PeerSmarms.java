@@ -1,6 +1,7 @@
 package Tracker.Model;
 
-import java.util.Date;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.AssociationOverrides;
@@ -9,8 +10,6 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 @Entity
@@ -18,7 +17,7 @@ import javax.persistence.Transient;
 @AssociationOverrides({
 		@AssociationOverride(name = "pk.smarms", joinColumns = @JoinColumn(name = "SMARMS_ID")),
 		@AssociationOverride(name = "pk.peer", joinColumns = @JoinColumn(name = "PEER_ID")) })
-public class PeerSmarms implements java.io.Serializable {
+public class PeerSmarms implements java.io.Serializable, Observable {
 
 	private PeerSmarmsId pk = new PeerSmarmsId();
 	private Integer bytesDescargados;
@@ -79,5 +78,13 @@ public class PeerSmarms implements java.io.Serializable {
 
 	public int hashCode() {
 		return (getPk() != null ? getPk().hashCode() : 0);
+	}
+
+	public void addListener(InvalidationListener listener) {
+
+	}
+
+	public void removeListener(InvalidationListener listener) {
+
 	}
 }

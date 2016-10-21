@@ -8,12 +8,12 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1">
    <bottom>
       <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <buttons>
@@ -62,11 +62,15 @@
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <items>
-            <Label text="IP: 192.168.0.145" />
+            <Label text="IP:" />
+            <TextField prefHeight="27.0" prefWidth="90.0" />
+            <Label text="Port:" />
+            <TextField prefHeight="27.0" prefWidth="90.0" />
             <Separator prefHeight="28.0" prefWidth="35.0" />
-            <Label text="Port: 54543" />
+            <Label text="ID: " />
+            <TextField prefHeight="27.0" prefWidth="90.0" />
             <Separator prefHeight="28.0" prefWidth="35.0" />
-            <Label text="ID: XFGE342HJ" />
+            <Button mnemonicParsing="false" text="Guardar" />
          </items>
       </ToolBar>
    </top>

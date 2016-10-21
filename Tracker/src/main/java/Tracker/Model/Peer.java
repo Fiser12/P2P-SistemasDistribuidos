@@ -1,5 +1,8 @@
 package Tracker.Model;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,7 +19,7 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "peer")
-public class Peer implements java.io.Serializable {
+public class Peer implements java.io.Serializable, Observable {
 
 	private Integer idPeer;
 	private String ip;
@@ -76,4 +79,11 @@ public class Peer implements java.io.Serializable {
 		this.peerSmarmses = peerSmarmses;
 	}
 
+	public void addListener(InvalidationListener listener) {
+
+	}
+
+	public void removeListener(InvalidationListener listener) {
+
+	}
 }

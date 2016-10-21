@@ -1,10 +1,13 @@
 package Tracker.Model;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+
 import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 
 @Embeddable
-public class PeerSmarmsId implements java.io.Serializable {
+public class PeerSmarmsId implements java.io.Serializable, Observable {
 
 	private Peer peer;
     private Smarms smarms;
@@ -44,5 +47,12 @@ public class PeerSmarmsId implements java.io.Serializable {
         result = 31 * result + (peer != null ? peer.hashCode() : 0);
         return result;
     }
-    
+
+	public void addListener(InvalidationListener listener) {
+
+	}
+
+	public void removeListener(InvalidationListener listener) {
+
+	}
 }

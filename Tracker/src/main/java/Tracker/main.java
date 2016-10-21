@@ -1,5 +1,6 @@
 package Tracker;
 
+import Tracker.Controller.TrackerService;
 import Tracker.Model.Peer;
 import Tracker.Model.PeerSmarms;
 import Tracker.Model.Smarms;
@@ -9,9 +10,10 @@ import Tracker.View.TrackerWindow;
 
 public class main {
     public static void main(String[] args) {
-        TrackerWindow.launch(args);
+        TrackerService controller = new TrackerService();
+        controller.ejecutarVentana();
     }
-    public static void testBBDD()
+/*    public static void testBBDD()
     {
         System.out.println("Hibernate many to many - join table + extra column (Annotation)");
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -37,4 +39,5 @@ public class main {
         System.out.println("Done");
 
     }
+    */
 }
