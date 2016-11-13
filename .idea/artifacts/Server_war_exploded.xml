@@ -19,6 +19,7 @@
           <element id="library" level="project" name="Maven: org.slf4j:slf4j-simple:1.6.6" />
           <element id="library" level="project" name="Maven: javassist:javassist:3.12.1.GA" />
           <element id="library" level="project" name="Maven: org.xerial:sqlite-jdbc:3.7.2" />
+          <element id="library" level="project" name="Maven: org.apache.activemq:activemq-all:5.14.1" />
         </element>
       </element>
       <element id="directory" name="META-INF">

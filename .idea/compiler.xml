@@ -28,7 +28,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="P2P-SistemasDistribuidos" target="1.5" />
-      <module name="Server" target="1.5" />
+      <module name="Server" target="1.6" />
     </bytecodeTargetLevel>
   </component>
 </project>
