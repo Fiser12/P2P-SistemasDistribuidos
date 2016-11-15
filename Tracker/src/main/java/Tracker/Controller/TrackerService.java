@@ -1,13 +1,17 @@
 package Tracker.Controller;
 
+import Tracker.Model.Peer;
+import Tracker.Model.PeerSmarms;
+import Tracker.Model.Smarms;
+import Tracker.Util.HibernateUtil;
+import Tracker.VO.Tracker;
 import Tracker.VO.TrackerKeepAlive;
 import Tracker.View.TrackerWindow;
-import Tracker.VO.Tracker;
+import org.hibernate.Session;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.regex.Matcher;
 
 /**
  * Created by Fiser on 21/10/16.
@@ -86,5 +90,30 @@ public class TrackerService {
                 + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
         return patron.matches(ip);
     }
+    public static void testBBDD()
+    {
+        System.out.println("Hibernate many to many - join table + extra column (Annotation)");
+        Session session = HibernateUtil.getSessionFactory().openSession();
 
+        session.beginTransaction();
+
+        Smarms smarms = new Smarms();
+        smarms.setName("j");
+        smarms.setTamanoEnBytes(23);
+        Peer peer = new Peer();
+        peer.setIp("asdf");
+        peer.setPort(43233);
+        session.save(peer);
+
+
+        PeerSmarms peerSmarms = new PeerSmarms();
+        peerSmarms.setBytesDescargados(88);
+        peerSmarms.setSmarms(smarms);
+        smarms.getPeerSmarmses().add(peerSmarms);
+        peer.getPeerSmarmses().add(peerSmarms);
+        session.save(smarms);
+        session.getTransaction().commit();
+        System.out.println("Done");
+
+    }
 }

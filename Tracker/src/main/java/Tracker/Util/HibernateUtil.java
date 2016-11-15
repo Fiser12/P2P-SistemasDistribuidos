@@ -5,7 +5,7 @@ import org.hibernate.cfg.Configuration;
 
 public class HibernateUtil {
 
-    private static final SessionFactory sessionFactory = buildSessionFactory();
+    private static SessionFactory sessionFactory = buildSessionFactory();
 
     private static SessionFactory buildSessionFactory() {
         try {
@@ -24,6 +24,13 @@ public class HibernateUtil {
     public static void shutdown() {
         // Close caches and connection pools
         getSessionFactory().close();
+    }
+    public static SessionFactory changeDatabase(String url){
+        Configuration cfg = new Configuration();
+        cfg.configure();
+        cfg.setProperty("hibernate.connection.url", url);
+        sessionFactory = cfg.buildSessionFactory();
+        return sessionFactory;
     }
 
 }
