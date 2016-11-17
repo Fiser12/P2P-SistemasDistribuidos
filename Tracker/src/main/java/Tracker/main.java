@@ -1,16 +1,11 @@
 package Tracker;
 
 import Tracker.Controller.TrackerService;
-import Tracker.Model.Peer;
-import Tracker.Model.PeerSmarms;
-import Tracker.Model.Smarms;
-import Tracker.Util.HibernateUtil;
-import org.hibernate.Session;
-import Tracker.View.TrackerWindow;
 
 public class main {
     public static void main(String[] args) {
         TrackerService controller = TrackerService.getInstance();
-        controller.ejecutarVentana();
+//        controller.ejecutarVentana();
+        controller.connect("224.0.0.4", 1140, 1150, "14");
     }
 }

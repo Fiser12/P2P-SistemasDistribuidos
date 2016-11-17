@@ -1,12 +1,12 @@
 package Tracker.Controller;
 
 import Tracker.Util.UtilController;
+import Tracker.VO.TypeMessage;
 
 import javax.jms.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,32 +31,34 @@ public class JMSManager {
     private QueueSender queueSender;
     private QueueReceiver queueReceiver;
 
-
     private JMSManager() {
         topicPublishers = new ArrayList<TopicPublisher>();
         topicSubscribers = new ArrayList<TopicSubscriber>();
         try {
             context1 = new InitialContext();
-            topicConnectionFactory = (TopicConnectionFactory) context1
-                    .lookup("TopicConnectionFactory");
+            topicConnectionFactory = (TopicConnectionFactory) context1.lookup("TopicConnectionFactory");
             topicConnection = topicConnectionFactory.createTopicConnection();
-            topicSession = topicConnection.createTopicSession(false,
-                    Session.AUTO_ACKNOWLEDGE);
+            topicSession = topicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
         } catch (NamingException e) {
-            System.err.println("NamingException");
+            System.err.println("NamingException - JMSManager Constructor 1");
+            e.printStackTrace();
         } catch (JMSException e) {
-            System.err.println("JMS Exception");
+            System.err.println("JMS Exception - JMSManager Constructor 1");
+            e.printStackTrace();
         }
         try {
+            context2 = new InitialContext();
             queueConnectionFactory = (QueueConnectionFactory) context2.lookup("QueueConnectionFactory");
             queueConnection = queueConnectionFactory.createQueueConnection();
             queueSession = queueConnection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
             queueTrackersManagement = (Queue) context2.lookup("jndi.ssdd.trackersmanagement");
             queueSender = queueSession.createSender(queueTrackersManagement);
         } catch (NamingException e) {
-            System.err.println("NamingException");
+            System.err.println("NamingException - JMSManager Constructor 2");
+            e.printStackTrace();
         } catch (JMSException e) {
-            System.err.println("JMS Exception");
+            System.err.println("JMS Exception - JMSManager Constructor 2");
+            e.printStackTrace();
         }
     }
     public static JMSManager getInstance(){
@@ -65,6 +67,11 @@ public class JMSManager {
         }
         return instance;
     }
+
+    /**
+     * El GestorDeRedundancia pasará a recibir los mensajes con los JNDI a los que se le suscribe
+     * @param suscribir
+     */
     public void suscribir(GestorRedundancia suscribir)
     {
         try {
@@ -74,6 +81,7 @@ public class JMSManager {
             lista.add(UtilController.JNDIConfirmToStore);
             lista.add(UtilController.JNDIIncorrectId);
             lista.add(UtilController.JNDICorrectId);
+            //TODO: Suscribir solo a los que interesa
 
             if (instance != null) {
                 for(String add: lista) {
@@ -84,50 +92,9 @@ public class JMSManager {
                 }
             }
         } catch (JMSException e) {
-            System.err.println("JMS Exception");
+            System.err.println("JMS Exception - Suscribir");
         } catch (NamingException e) {
-            System.err.println("NamingException");
-        }
-
-    }
-    public void enviarMensajeKeepAlive() {
-        try {
-            if (instance != null) {
-                Topic topicKeepAliveMessages = (Topic) context1.lookup(UtilController.JNDINameKeepAlive);
-                TopicPublisher topicPublisher = topicSession.createPublisher(topicKeepAliveMessages);
-                topicPublishers.add(topicPublisher);
-                MapMessage mapMessage = topicSession.createMapMessage();
-                mapMessage.setStringProperty("TypeMessage", "KeepAlive");
-                mapMessage.setString("Id", TrackerService.getInstance().getTracker().getId());
-                mapMessage.setBoolean("Master", TrackerService.getInstance().getTracker().isMaster());
-                topicPublisher.publish(mapMessage);
-            }
-        } catch (JMSException e) {
-            System.err.println("JMS Exception");
-        } catch (NamingException e) {
-            System.err.println("NamingException");
-        }
-
-    }
-    public void enviarMensajeDeIdIncorrecto(String originId, String candidateId){
-        try {
-            if (instance != null) {
-                Topic topicIncorrectIdMessages = (Topic) context1.lookup(UtilController.JNDIIncorrectId);
-                TopicPublisher topicPublisher = topicSession
-                        .createPublisher(topicIncorrectIdMessages);
-                topicPublishers.add(topicPublisher);
-                MapMessage mapMessage = topicSession.createMapMessage();
-                mapMessage.setStringProperty("TypeMessage", "TYPE_ERROR_ID_MESSAGE");
-                mapMessage.setString("OriginId", originId);
-                mapMessage.setString("CandidateId", candidateId);
-
-                topicPublisher.publish(mapMessage);
-                System.out.println("- MapMessage sent to the Topic!");
-            }
-        } catch (JMSException e) {
-            System.err.println("JMS Exception");
-        } catch (NamingException e) {
-            System.err.println("NamingException");
+            System.err.println("NamingException - Suscribir");
         }
     }
     public void recibirMensajesParaMiId(GestorRedundancia gestor){
@@ -137,58 +104,29 @@ public class JMSManager {
                 queueReceiver.setMessageListener(gestor);
             }
         } catch (JMSException e) {
-            System.err.println("JMS Exception (publishKeepAliveMessage) ");
+            System.err.println("JMS Exception - Recibir Mensajes para mi id");
         }
     }
-    public void publishCorrectIdMessage(String destinationId) {
+
+    public void enviarMensajeKeepAlive() {
         try {
             if (instance != null) {
-                Topic topicConfirmToStoreMessages = (Topic) context1.lookup(UtilController.JNDICorrectId);
-                TopicPublisher topicPublisher = topicSession.createPublisher(topicConfirmToStoreMessages);
+                Topic topicKeepAliveMessages = (Topic) context1.lookup(UtilController.JNDINameKeepAlive);
+                TopicPublisher topicPublisher = topicSession.createPublisher(topicKeepAliveMessages);
                 topicPublishers.add(topicPublisher);
-                MapMessage mapMessage;
-                mapMessage = topicSession.createMapMessage();
-                mapMessage.setStringProperty("TypeMessage", UtilController.TYPE_CORRECT_ID_MESSAGE);
-                mapMessage.setStringProperty("DestinationId", destinationId);
-                mapMessage.setString("Id", destinationId);
+                MapMessage mapMessage = topicSession.createMapMessage();
+                mapMessage.setStringProperty("Type", TypeMessage.KeepAlive.toString());
+                mapMessage.setString("Id", TrackerService.getInstance().getTracker().getId());
+                mapMessage.setBoolean("Master", TrackerService.getInstance().getTracker().isMaster());
                 topicPublisher.publish(mapMessage);
             }
         } catch (JMSException e) {
-            System.err.println("JMS Exception");
+            System.err.println("JMS Exception - KeepAlive");
         } catch (NamingException e) {
-            System.err.println("NamingException");
+            System.err.println("NamingException - KeepAlive");
+            e.printStackTrace();
         }
-    }
-    public void mensajeDeBackup(String destinationId) {
-        if (instance != null) {
-            File file = new File("tracker_" + TrackerService.getInstance().getTracker().getId() + ".db");
-            byte[] bytes = null;
-            FileInputStream fis = null;
-            try {
-                fis = new FileInputStream(file);
-            } catch (FileNotFoundException e) {
-            }
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            byte[] buf = new byte[1024];
-            try {
-                for (int readNum; (readNum = fis.read(buf)) != -1;) {
-                    bos.write(buf, 0, readNum);
-                }
-                bytes = bos.toByteArray();
-                fis.close();
-            } catch (IOException e) {
-            }
-            MapMessage mapMessage;
-            try {
-                mapMessage = queueSession.createMapMessage();
-                mapMessage.setStringProperty("TypeMessage", UtilController.TYPE_BACKUP_MESSAGE);
-                mapMessage.setStringProperty("DestinationId", destinationId);
-                mapMessage.setString("Id", destinationId);
-                mapMessage.setBytes("file", bytes);
-                queueSender.send(mapMessage);
-            } catch (JMSException e) {
-            }
-        }
+
     }
     public void startTopic() throws JMSException {
         topicConnection.start();
@@ -196,7 +134,7 @@ public class JMSManager {
     public void startQueue() throws JMSException {
         queueConnection.start();
     }
-    public void closeTopic() {
+    public void close() {
         try {
             for (TopicSubscriber topicSubscriber : topicSubscribers) {
                 topicSubscriber.close();
@@ -211,8 +149,6 @@ public class JMSManager {
         } catch (JMSException e) {
 
         }
-    }
-    public void closeQueue() {
         try {
             if (queueSender != null)
                 queueSender.close();
@@ -222,10 +158,9 @@ public class JMSManager {
                 queueSession.close();
             if (queueConnection != null)
                 queueConnection.close();
-
         } catch (JMSException e) {
 
         }
-    }
 
+    }
 }
