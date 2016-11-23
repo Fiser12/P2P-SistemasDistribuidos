@@ -5,13 +5,8 @@ import Tracker.Model.PeerSmarms;
 import Tracker.Model.Smarms;
 import Tracker.Util.HibernateUtil;
 import Tracker.VO.Tracker;
-import Tracker.VO.TrackerKeepAlive;
 import Tracker.View.TrackerWindow;
 import org.hibernate.Session;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Created by Fiser on 21/10/16.
@@ -46,7 +41,7 @@ public class TrackerService {
 
 
     public void connect(String ipAddress, int port, int portForPeers, String id) {
-        gestorRedundancia.pararEscucharPaquetes = false;
+        gestorRedundancia.escuchandoPaquetes = true;
         gestorRedundancia.pararHiloKeepAlive = false;
         gestorRedundancia.pararComprobacionKeepAlive = false;
         tracker.setId(id);
@@ -56,17 +51,6 @@ public class TrackerService {
         tracker.setMaster(false);
         new Thread(gestorRedundancia).start();
 
-    }
-    public List<TrackerKeepAlive> obtenerTrackersActivos() {
-        if (getTracker().getTrackersActivos() != null) {
-            List<TrackerKeepAlive> listActiveTrackers = new ArrayList<TrackerKeepAlive>();
-            Collection<TrackerKeepAlive> activeTrackers = getTracker().getTrackersActivos().values();
-            if (activeTrackers != null) {
-                listActiveTrackers.addAll(activeTrackers);
-            }
-            return listActiveTrackers;
-        } else
-            return new ArrayList<TrackerKeepAlive>();
     }
     public static void testBBDD()
     {

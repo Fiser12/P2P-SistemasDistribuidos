@@ -7,6 +7,7 @@ import javax.jms.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,7 +101,7 @@ public class JMSManager {
     public void recibirMensajesParaMiId(GestorRedundancia gestor){
         try {
             if (instance != null) {
-                queueReceiver = queueSession.createReceiver(queueTrackersManagement, "DestinationId = '" + TrackerService.getInstance().getTracker().getId() + "'");
+                queueReceiver = queueSession.createReceiver(queueTrackersManagement, "Destino = '" + TrackerService.getInstance().getTracker().getId() + "'");
                 queueReceiver.setMessageListener(gestor);
             }
         } catch (JMSException e) {
@@ -119,15 +120,89 @@ public class JMSManager {
                 mapMessage.setString("Id", TrackerService.getInstance().getTracker().getId());
                 mapMessage.setBoolean("Master", TrackerService.getInstance().getTracker().isMaster());
                 topicPublisher.publish(mapMessage);
+                System.out.println("KEEPALIVE");
             }
         } catch (JMSException e) {
             System.err.println("JMS Exception - KeepAlive");
+            e.printStackTrace();
         } catch (NamingException e) {
             System.err.println("NamingException - KeepAlive");
             e.printStackTrace();
         }
 
     }
+    public void enviarMensajeIdIncorrecto(String idInicial, String idPropuesto) {
+        try {
+            if (instance != null) {
+                Topic topicIncorrectIdMessages = (Topic) context1.lookup(UtilController.JNDIIncorrectId);
+                TopicPublisher topicPublisher = topicSession.createPublisher(topicIncorrectIdMessages);
+                topicPublishers.add(topicPublisher);
+                MapMessage mapMessage = topicSession.createMapMessage();
+                mapMessage.setStringProperty("Type", TypeMessage.IncorrectId.toString());
+                mapMessage.setString("IdInicial", idInicial);
+                mapMessage.setString("IdPropuesto", idPropuesto);
+                topicPublisher.publish(mapMessage);
+            }
+        } catch (JMSException e) {
+            System.err.println("JMS Exception - IncorrectID");
+            e.printStackTrace();
+        } catch (NamingException e) {
+            System.err.println("NamingException - IncorrectID");
+            e.printStackTrace();
+        }
+    }
+    public void enviarMensajeIdCorrecto(String idDestino) {
+        try {
+            if (instance != null) {
+                Topic topicIncorrectIdMessages = (Topic) context1.lookup(UtilController.JNDICorrectId);
+                TopicPublisher topicPublisher = topicSession.createPublisher(topicIncorrectIdMessages);
+                topicPublishers.add(topicPublisher);
+                MapMessage mapMessage;
+                mapMessage = topicSession.createMapMessage();
+                mapMessage.setStringProperty("Type", TypeMessage.CorrectId.toString());
+                mapMessage.setString("Id", idDestino);
+                topicPublisher.publish(mapMessage);
+            }
+        } catch (JMSException e) {
+            System.err.println("JMS Exception - CorrectId");
+            e.printStackTrace();
+        } catch (NamingException e) {
+            System.err.println("NamingException - CorrectId");
+            e.printStackTrace();
+        }
+
+    }
+    public void enviarBBDD(String destino) {
+        if (instance != null) {
+            File file = new File("tracker_" + TrackerService.getInstance().getTracker().getId() + ".db");
+            byte[] bytes = null;
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(file);
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                byte[] buf = new byte[1024];
+                for (int readNum; (readNum = fis.read(buf)) != -1;) {
+                    bos.write(buf, 0, readNum);
+                }
+                bytes = bos.toByteArray();
+                fis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            MapMessage mapMessage;
+            try {
+                mapMessage = queueSession.createMapMessage();
+                mapMessage.setStringProperty("Type", TypeMessage.BackUp.toString());
+                mapMessage.setStringProperty("Destino", destino);
+                mapMessage.setString("Id", destino);
+                mapMessage.setBytes("file", bytes);
+                queueSender.send(mapMessage);
+            } catch (JMSException e) {
+                System.err.println("JMS Exception - enviarBBDD");
+            }
+        }
+    }
+
     public void startTopic() throws JMSException {
         topicConnection.start();
     }

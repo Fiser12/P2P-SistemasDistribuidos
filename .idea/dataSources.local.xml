@@ -2,12 +2,26 @@
 <project version="4">
   <component name="dataSourceStorageLocal">
     <data-source name="Sqlite (Xerial) - trackerdb.db" uuid="6b4c607a-2aab-495f-8574-509505ed6b65">
-      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" />
+      <database-info product="SQLite" version="3.8.11" jdbc-version="2.1" driver-name="SQLiteJDBC" driver-version="native" />
+      <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed" />
       <secret-storage>memory</secret-storage>
+      <auth-required>false</auth-required>
     </data-source>
     <data-source name="hibernate.cfg.xml/Hibernate" uuid="a211b213-0c05-44f7-a21a-a19a6a8144d8">
       <database-info product="SQLite" version="3.8.11" jdbc-version="2.1" driver-name="SQLiteJDBC" driver-version="native" />
       <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed" />
+      <auth-required>false</auth-required>
+    </data-source>
+    <data-source name="Sqlite (Xerial) - tracker_76.db" uuid="9a12dc28-67b6-4ded-bb79-aa56c6acbef5">
+      <database-info product="SQLite" version="3.8.11" jdbc-version="2.1" driver-name="SQLiteJDBC" driver-version="native" />
+      <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed" />
+      <secret-storage>memory</secret-storage>
+      <auth-required>false</auth-required>
+    </data-source>
+    <data-source name="Sqlite (Xerial) - identifier.sqlite" uuid="09c4cfa9-78d0-4a13-b08d-9b0e1526a529">
+      <database-info product="SQLite" version="3.8.11" jdbc-version="2.1" driver-name="SQLiteJDBC" driver-version="native" />
+      <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed" />
+      <secret-storage>master_key</secret-storage>
       <auth-required>false</auth-required>
     </data-source>
   </component>

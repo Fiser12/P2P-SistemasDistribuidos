@@ -1,14 +1,11 @@
 package Tracker.VO;
 
-import java.util.HashMap;
-
 public class Tracker {
 
     private String id;
     private String ipAddress;
     private int port;
     private int portForPeers;
-    private HashMap<String, TrackerKeepAlive> trackersActivos;
     private boolean master;
 
     public Tracker() {
@@ -19,13 +16,8 @@ public class Tracker {
         this.port = port;
         this.portForPeers = portForPeers;
     }
-    public Tracker(String id,
-                   HashMap<String, TrackerKeepAlive> trackersActivos) {
+    public Tracker(String id) {
         this.id = id;
-        this.trackersActivos = trackersActivos;
-    }
-    public void addActiveTracker(TrackerKeepAlive activeTracker) {
-        trackersActivos.put(activeTracker.getId(), activeTracker);
     }
     public String getId() {
         return id;
@@ -50,15 +42,6 @@ public class Tracker {
     }
     public void setPortForPeers(int portForPeers) {
         this.portForPeers = portForPeers;
-    }
-    public HashMap<String, TrackerKeepAlive> getTrackersActivos() {
-        if (trackersActivos == null) {
-            trackersActivos = new HashMap<String, TrackerKeepAlive>();
-        }
-        return trackersActivos;
-    }
-    public void setTrackersActivos(HashMap<String, TrackerKeepAlive> trackersActivos) {
-        this.trackersActivos = trackersActivos;
     }
     public boolean isMaster() {
         return master;

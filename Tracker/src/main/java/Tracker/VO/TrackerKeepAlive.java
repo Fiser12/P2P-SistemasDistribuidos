@@ -44,7 +44,7 @@ public class TrackerKeepAlive implements Comparator<Object> {
 
     @Override
     public String toString() {
-        return "Id: " + id + " Is master: " + master;
+        return "Id: " + id + " Master: " + master;
     }
     @Override
     public int compare(Object o1, Object o2) {
