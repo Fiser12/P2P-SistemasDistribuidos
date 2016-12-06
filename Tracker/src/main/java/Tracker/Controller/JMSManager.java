@@ -82,7 +82,6 @@ public class JMSManager {
             lista.add(UtilController.JNDIConfirmToStore);
             lista.add(UtilController.JNDIIncorrectId);
             lista.add(UtilController.JNDICorrectId);
-            //TODO: Suscribir solo a los que interesa
 
             if (instance != null) {
                 for(String add: lista) {
@@ -120,7 +119,6 @@ public class JMSManager {
                 mapMessage.setString("Id", TrackerService.getInstance().getTracker().getId());
                 mapMessage.setBoolean("Master", TrackerService.getInstance().getTracker().isMaster());
                 topicPublisher.publish(mapMessage);
-                System.out.println("KEEPALIVE");
             }
         } catch (JMSException e) {
             System.err.println("JMS Exception - KeepAlive");
@@ -174,32 +172,74 @@ public class JMSManager {
     }
     public void enviarBBDD(String destino) {
         if (instance != null) {
-            File file = new File("tracker_" + TrackerService.getInstance().getTracker().getId() + ".db");
-            byte[] bytes = null;
-            FileInputStream fis = null;
-            try {
-                fis = new FileInputStream(file);
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                byte[] buf = new byte[1024];
-                for (int readNum; (readNum = fis.read(buf)) != -1;) {
-                    bos.write(buf, 0, readNum);
-                }
-                bytes = bos.toByteArray();
-                fis.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
             MapMessage mapMessage;
             try {
                 mapMessage = queueSession.createMapMessage();
                 mapMessage.setStringProperty("Type", TypeMessage.BackUp.toString());
                 mapMessage.setStringProperty("Destino", destino);
                 mapMessage.setString("Id", destino);
-                mapMessage.setBytes("file", bytes);
+                mapMessage.setBytes("file", getBytesDatabase());
                 queueSender.send(mapMessage);
             } catch (JMSException e) {
                 System.err.println("JMS Exception - enviarBBDD");
             }
+        }
+    }
+    public void confirmacionListoParaGuardar() {
+        try {
+            if (instance != null) {
+                Topic topicReady = (Topic) context1.lookup(UtilController.JNDIReadyToStore);
+                TopicPublisher topicPublisher = topicSession.createPublisher(topicReady);
+                topicPublishers.add(topicPublisher);
+                MapMessage mapMessage = topicSession.createMapMessage();
+                mapMessage.setStringProperty("Type", TypeMessage.ReadyToStore.toString());
+                mapMessage.setString("Id", TrackerService.getInstance().getTracker().getId());
+                topicPublisher.publish(mapMessage);
+            }
+        } catch (JMSException e) {
+            System.err.println("JMS Exception - Manda mensaje para guardar");
+            e.printStackTrace();
+        } catch (NamingException e) {
+            System.err.println("NamingException - Manda mensaje para guardar");
+            e.printStackTrace();
+        }
+    }
+    private byte[] getBytesDatabase(){
+        File file = new File("tracker_" + TrackerService.getInstance().getTracker().getId() + ".db");
+        byte[] bytes = null;
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(file);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            byte[] buf = new byte[1024];
+            for (int readNum; (readNum = fis.read(buf)) != -1;) {
+                bos.write(buf, 0, readNum);
+            }
+            bytes = bos.toByteArray();
+            fis.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bytes;
+    }
+    public void confirmacionActualizarBBDD() {
+        try {
+            if (instance != null) {
+                Topic topicConfirm = (Topic) context1.lookup(UtilController.JNDIConfirmToStore);
+                TopicPublisher topicPublisher = topicSession.createPublisher(topicConfirm);
+                topicPublishers.add(topicPublisher);
+                MapMessage mapMessage = topicSession.createMapMessage();
+                mapMessage.setStringProperty("Type", TypeMessage.ConfirmToStore.toString());
+                mapMessage.setString("Id", TrackerService.getInstance().getTracker().getId());
+                mapMessage.setBytes("file", getBytesDatabase());
+                topicPublisher.publish(mapMessage);
+            }
+        } catch (JMSException e) {
+            System.err.println("JMS Exception - Manda mensaje para guardar");
+            e.printStackTrace();
+        } catch (NamingException e) {
+            System.err.println("NamingException - Manda mensaje para guardar");
+            e.printStackTrace();
         }
     }
 

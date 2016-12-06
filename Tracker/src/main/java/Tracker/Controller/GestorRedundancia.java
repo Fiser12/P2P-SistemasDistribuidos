@@ -1,6 +1,7 @@
 package Tracker.Controller;
 
 import Tracker.Util.HibernateUtil;
+import Tracker.VO.Estado;
 import Tracker.VO.TrackerKeepAlive;
 import Tracker.VO.TypeMessage;
 import org.apache.activemq.command.ActiveMQMapMessage;
@@ -27,12 +28,14 @@ public class GestorRedundancia implements Runnable, MessageListener {
     public boolean eligiendoMaster = false;
     private HashMap<String, TrackerKeepAlive> trackersActivos;
 
-    public GestorRedundancia() {
+    public GestorRedundancia()
+    {
         trackersActivos = new HashMap<String, TrackerKeepAlive>();
     }
 
     @Override
-    public void run() {
+    public void run()
+    {
         JMSManager.getInstance().suscribir(this);
         hiloDeEnvioDeKeepAlive();
         hiloDeComprobarTrackersActivos();
@@ -49,7 +52,12 @@ public class GestorRedundancia implements Runnable, MessageListener {
         }
 
     }
-    private void hiloDeEnvioDeKeepAlive() {
+
+    /**
+     * Es el método que se va a encargar de enviar mensajes cada 2 segundos de KeepAlive a la red
+     */
+    private void hiloDeEnvioDeKeepAlive()
+    {
         Thread threadSendKeepAliveMessages = new Thread() {
             public void run() {
                 while (!pararHiloKeepAlive) {
@@ -64,10 +72,12 @@ public class GestorRedundancia implements Runnable, MessageListener {
         };
         threadSendKeepAliveMessages.start();
     }
-
-    private void hiloDeComprobarTrackersActivos() {
+    /**
+     * Es el método que se va a encargar de comprobar todos los trackers de la red
+     */
+    private void hiloDeComprobarTrackersActivos()
+    {
         Thread threadCheckKeepAliveMessages = new Thread() {
-
             public void run() {
                 try {
                     Thread.sleep(4000);
@@ -90,6 +100,10 @@ public class GestorRedundancia implements Runnable, MessageListener {
         };
         threadCheckKeepAliveMessages.start();
     }
+
+    /**
+     * Recorreemos todos los trackers y comprobamos cuando es la última vez que han estado activos quitando de la lista los que se hayan caido
+     */
     private void comprobarTrackersActivos()
     {
         for (TrackerKeepAlive activeTracker : trackersActivos.values()) {
@@ -101,9 +115,9 @@ public class GestorRedundancia implements Runnable, MessageListener {
                 }
             }
         }
-
     }
-    private void eleccionDelMaster() {
+    private void eleccionDelMaster()
+    {
         eligiendoMaster = true;
         if (trackersActivos.size() == 0) {
             TrackerService.getInstance().getTracker().setMaster(true);
@@ -125,7 +139,8 @@ public class GestorRedundancia implements Runnable, MessageListener {
         }
         eligiendoMaster = false;
     }
-    private void calcularID(String id) {
+    private void calcularID(String id)
+    {
         int candidateID = Integer.parseInt(TrackerService.getInstance().getTracker().getId()) + 1;
         int tempID;
         for (TrackerKeepAlive activeTracker : trackersActivos.values()) {
@@ -137,37 +152,34 @@ public class GestorRedundancia implements Runnable, MessageListener {
         JMSManager.getInstance().enviarMensajeIdIncorrecto(id, String.valueOf(candidateID));
     }
 
-    private void crearNuevaBBDD() {
+    private void crearNuevaBBDD()
+    {
         Session session = HibernateUtil.changeDatabase("jdbc:sqlite:tracker_"+TrackerService.getInstance().getTracker().getId()+".db").openSession();
         session.beginTransaction();
         session.getTransaction().commit();
     }
-
-    private void sincronizarBBDD(Object[] data) {
-        byte[] bytesOfDbFile = (byte[]) data[0];
+    private void convertirByteEnFichero(byte[] bytes)
+    {
+        File file = new File("tracker_" + TrackerService.getInstance().getTracker().getId() + ".db");
+        file.delete();
         String newFileName = "tracker_" + TrackerService.getInstance().getTracker().getId() + ".db";
         File fileDest = new File(newFileName);
-        FileOutputStream file = null;
+        FileOutputStream fileOutputStream = null;
         try {
             long length = fileDest.length();
-            file = new FileOutputStream(fileDest);
+            fileOutputStream = new FileOutputStream(fileDest);
             if (length > 0) {
-                file.write((new String()).getBytes());
+                fileOutputStream.write((new String()).getBytes());
             }
-            file.write(bytesOfDbFile);
-            file.flush();
-            file.close();
+            fileOutputStream.write(bytes);
+            fileOutputStream.flush();
+            fileOutputStream.close();
         } catch (FileNotFoundException e) {
             System.err.println("FileNotFoundException");
         } catch (IOException e) {
             System.err.println("IOException");
         }
-
-        Session session = HibernateUtil.changeDatabase("jdbc:sqlite:tracker_"+TrackerService.getInstance().getTracker().getId()+".db").openSession();
-        session.beginTransaction();
-        session.getTransaction().commit();
     }
-
     private TypeMessage tipoMensaje(MapMessage message) {
         Enumeration<String> propertyNames;
         String typeMessage = "";
@@ -203,6 +215,7 @@ public class GestorRedundancia implements Runnable, MessageListener {
                     }
                     TrackerKeepAlive activeTracker = new TrackerKeepAlive();
                     activeTracker.setActive(true);
+                    activeTracker.setConfirmacionActualizacion(Estado.Esperando);
                     activeTracker.setId(id);
                     activeTracker.setLastKeepAlive(new Date());
                     activeTracker.setMaster(master);
@@ -230,8 +243,50 @@ public class GestorRedundancia implements Runnable, MessageListener {
             JMSManager.getInstance().recibirMensajesParaMiId(this);
         }
     }
+
+    /**
+     * Este método se encarga de comprobar cada vez que recibe un ready de comprobar si ya están todos preparados y cuando son suficientes, confirma la update de la BBDD
+     * @param datos
+     */
+    private void comprobarSiEstanPreparados(Object[] datos)
+    {
+        if (TrackerService.getInstance().getTracker().isMaster()) {
+
+            String id = (String) datos[0];
+            TrackerKeepAlive tracker = trackersActivos.get(id);
+            tracker.setConfirmacionActualizacion(Estado.Confirmado);
+
+            int confirmados = 0;
+            for (TrackerKeepAlive trackerTemp : trackersActivos.values()) {
+                if (trackerTemp.getConfirmacionActualizacion() == Estado.Confirmado) {
+                    confirmados++;
+                }
+            }
+            if (confirmados == trackersActivos.size()) {
+                for (TrackerKeepAlive trackerTemp : trackersActivos.values()) {
+                    trackerTemp.setConfirmacionActualizacion(Estado.Esperando);
+                }
+                /**
+                 * TODO Guardar los nuevos datos en la BBDD
+                 */
+                JMSManager.getInstance().confirmacionActualizarBBDD();
+            }
+        }
+    }
+
+    /**
+     * Coge los bytes recibidos con la nueva BBDD y la convierte en su base de datos y se conecta a ella
+     * @param bytes
+     */
+    private void actualizarBBDD(byte[] bytes){
+        convertirByteEnFichero(bytes);
+        Session session = HibernateUtil.changeDatabase("jdbc:sqlite:tracker_"+TrackerService.getInstance().getTracker().getId()+".db").openSession();
+        session.beginTransaction();
+        session.getTransaction().commit();
+    }
     @Override
-    public void onMessage(Message mensaje) {
+    public void onMessage(Message mensaje)
+    {
         if(mensaje!=null && mensaje.getClass().getCanonicalName().equals(ActiveMQMapMessage.class.getCanonicalName())){
             MapMessage mapMensaje = ((MapMessage) mensaje);
             TypeMessage tipoMensaje = tipoMensaje(mapMensaje);
@@ -250,7 +305,7 @@ public class GestorRedundancia implements Runnable, MessageListener {
                         keepAlive(data.toArray());
                         break;
                     case BackUp:
-                        sincronizarBBDD(data.toArray());
+                        actualizarBBDD((byte[])data.toArray()[0]);
                         break;
                     case CorrectId:
                         idCorrecto(data.toArray());
@@ -258,11 +313,11 @@ public class GestorRedundancia implements Runnable, MessageListener {
                     case IncorrectId:
                         idIncorrecto(data.toArray());
                         break;
-                    case ConfirmToStore:
-
-                        break;
                     case ReadyToStore:
-
+                        comprobarSiEstanPreparados(data.toArray());
+                        break;
+                    case ConfirmToStore:
+                        actualizarBBDD((byte[])data.toArray()[1]);
                         break;
                 }
             } catch (JMSException e) {

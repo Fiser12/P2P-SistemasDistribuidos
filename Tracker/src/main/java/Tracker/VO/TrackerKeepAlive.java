@@ -10,16 +10,14 @@ public class TrackerKeepAlive implements Comparator<Object> {
     private Date lastKeepAlive;
     private boolean master;
 
+    private Estado confirmacionActualizacion;
+
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public boolean isActive() {
-        return active;
     }
 
     public void setActive(boolean active) {
@@ -40,6 +38,14 @@ public class TrackerKeepAlive implements Comparator<Object> {
 
     public void setMaster(boolean master) {
         this.master = master;
+    }
+
+    public Estado getConfirmacionActualizacion() {
+        return confirmacionActualizacion;
+    }
+
+    public void setConfirmacionActualizacion(Estado confirmacionActualizacion) {
+        this.confirmacionActualizacion = confirmacionActualizacion;
     }
 
     @Override
