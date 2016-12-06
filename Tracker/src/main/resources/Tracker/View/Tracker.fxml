@@ -18,7 +18,6 @@
       <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <buttons>
             <Button mnemonicParsing="false" text="Simular Fallo Master" />
-          <Button mnemonicParsing="false" text="Iniciar" />
         </buttons>
       </ButtonBar>
    </bottom>
@@ -70,7 +69,7 @@
             <Label text="ID: " />
             <TextField prefHeight="27.0" prefWidth="90.0" />
             <Separator prefHeight="28.0" prefWidth="35.0" />
-            <Button mnemonicParsing="false" text="Guardar" />
+            <Button mnemonicParsing="false" text="Iniciar" />
          </items>
       </ToolBar>
    </top>

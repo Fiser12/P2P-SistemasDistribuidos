@@ -29,7 +29,7 @@ public class TrackerService {
     }
 
     public void ejecutarVentana(){
-        ventana.launch();
+        TrackerWindow.startWindow();
     }
     public Tracker getTracker() {
         return tracker;

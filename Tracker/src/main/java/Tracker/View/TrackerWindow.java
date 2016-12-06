@@ -27,8 +27,8 @@ public class TrackerWindow extends Application implements Observer {
             e.printStackTrace();
         }
     }
-    public static void main(String[] args) {
-        launch(args);
+    public static void startWindow() {
+        launch(new String[0]);
     }
 
     public void update(Observable o, Object arg) {
