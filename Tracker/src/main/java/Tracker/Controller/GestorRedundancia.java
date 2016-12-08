@@ -79,15 +79,8 @@ public class GestorRedundancia implements Runnable, MessageListener {
     {
         Thread threadCheckKeepAliveMessages = new Thread() {
             public void run() {
-                try {
-                    Thread.sleep(4000);
-                    if (!pararComprobacionKeepAlive) {
-                        eleccionDelMaster();
-                        comprobarTrackersActivos();
-                    }
-                } catch (InterruptedException e) {
-                    System.err.println("Error en la comprobación inicial de trackers");
-                }
+                eleccionDelMaster();
+                comprobarTrackersActivos();
                 while (!pararComprobacionKeepAlive) {
                     try {
                         Thread.sleep(4000);

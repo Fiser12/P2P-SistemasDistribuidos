@@ -1,24 +1,20 @@
 package Tracker.Controller;
 
-import Tracker.Model.Peer;
-import Tracker.Model.PeerSmarms;
-import Tracker.Model.Smarms;
-import Tracker.Util.HibernateUtil;
 import Tracker.VO.Tracker;
-import Tracker.View.TrackerWindow;
-import org.hibernate.Session;
+import Tracker.View.TrackerMain;
 
 /**
  * Created by Fiser on 21/10/16.
  */
 public class TrackerService {
-    TrackerWindow ventana;
+    private TrackerMain ventana;
     private static TrackerService instance;
     private Tracker tracker;
-    private GestorRedundancia gestorRedundancia = new GestorRedundancia();
-
+    private GestorRedundancia gestorRedundancia;
+    private Thread hiloGestorRedundancia;
     private TrackerService(){
-        ventana = new TrackerWindow();
+        gestorRedundancia = new GestorRedundancia();
+        ventana = new TrackerMain();
         tracker = new Tracker();
     }
     public static TrackerService getInstance() {
@@ -29,7 +25,7 @@ public class TrackerService {
     }
 
     public void ejecutarVentana(){
-        TrackerWindow.startWindow();
+        ventana.launchWindow();
     }
     public Tracker getTracker() {
         return tracker;
@@ -38,7 +34,6 @@ public class TrackerService {
     public void setTracker(Tracker tracker) {
         this.tracker = tracker;
     }
-
 
     public void connect(String ipAddress, int port, int portForPeers, String id) {
         gestorRedundancia.escuchandoPaquetes = true;
@@ -49,33 +44,12 @@ public class TrackerService {
         tracker.setPortForPeers(portForPeers);
         tracker.setIpAddress(ipAddress);
         tracker.setMaster(false);
-        new Thread(gestorRedundancia).start();
-
+        hiloGestorRedundancia = new Thread(gestorRedundancia);
+        hiloGestorRedundancia.start();
     }
-    public static void testBBDD()
-    {
-        System.out.println("Hibernate many to many - join table + extra column (Annotation)");
-        Session session = HibernateUtil.getSessionFactory().openSession();
-
-        session.beginTransaction();
-
-        Smarms smarms = new Smarms();
-        smarms.setName("j");
-        smarms.setTamanoEnBytes(23);
-        Peer peer = new Peer();
-        peer.setIp("asdf");
-        peer.setPort(43233);
-        session.save(peer);
-
-
-        PeerSmarms peerSmarms = new PeerSmarms();
-        peerSmarms.setBytesDescargados(88);
-        peerSmarms.setSmarms(smarms);
-        smarms.getPeerSmarmses().add(peerSmarms);
-        peer.getPeerSmarmses().add(peerSmarms);
-        session.save(smarms);
-        session.getTransaction().commit();
-        System.out.println("Done");
-
+    public void disconnect(){
+        gestorRedundancia.escuchandoPaquetes = false;
+        gestorRedundancia.pararHiloKeepAlive = true;
+        gestorRedundancia.pararComprobacionKeepAlive = true;
     }
 }
