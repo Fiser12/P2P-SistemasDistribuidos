@@ -76,10 +76,12 @@ public class Peer implements java.io.Serializable, Observable {
 		this.peerSmarmses = peerSmarmses;
 	}
 
+	@Override
 	public void addListener(InvalidationListener listener) {
 
 	}
 
+	@Override
 	public void removeListener(InvalidationListener listener) {
 
 	}

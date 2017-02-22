@@ -1,7 +1,6 @@
 package Tracker.VO;
 
 public class Tracker {
-
     private String id;
     private String ipAddress;
     private int port;
@@ -40,6 +39,5 @@ public class Tracker {
     public void setMaster(boolean master) {
         this.master = master;
     }
-
 }
 

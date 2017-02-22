@@ -1,6 +1,7 @@
 package Tracker.View;
 
 import Tracker.Controller.TrackerService;
+import Tracker.Util.HibernateUtil;
 import Tracker.VO.TrackerKeepAlive;
 
 import javax.swing.*;
@@ -32,7 +33,7 @@ public class TrackerMain extends JFrame implements Observer {
     private JPanel smarmsPanel;
     private JPanel trackersPanel;
     private String[] column_names_trackers= {"Id","Es Master","Ultima update", "Estado"};
-    DefaultTableModel table_model_trackers=new DefaultTableModel(column_names_trackers,0);
+    DefaultTableModel table_model_trackers=new DefaultTableModel(column_names_trackers,10);
     String column_names_smarms[]= {"Id","Tamaño en bytes","Pares conectados"};
     DefaultTableModel table_model_smarms=new DefaultTableModel(column_names_smarms,0);
 
@@ -64,17 +65,22 @@ public class TrackerMain extends JFrame implements Observer {
                 }
             }
         });
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                TrackerService.getInstance().disconnect();
+                HibernateUtil.removeDatabase();
+            }
+        });
         setContentPane(mainPanel);
     }
 
     public synchronized void actualizarInterfaz(ConcurrentHashMap<String, TrackerKeepAlive> valores){
         DefaultTableModel defaultTable=new DefaultTableModel(column_names_trackers, 0);
-
         for(Map.Entry<String, TrackerKeepAlive> activeTracker : valores.entrySet()) {
             String[] temp = {activeTracker.getValue().getId(), (activeTracker.getValue().isMaster())?"Si":"No", activeTracker.getValue().getLastKeepAlive().toString(), activeTracker.getValue().getConfirmacionActualizacion().toString() };
             defaultTable.addRow(temp);
         }
-
         tableTrackers.setModel(defaultTable);
         defaultTable.fireTableDataChanged();
     }
@@ -101,7 +107,6 @@ public class TrackerMain extends JFrame implements Observer {
             }
             return cellComponent;
         }
-
     }
 
 }

@@ -2,7 +2,6 @@ package Tracker.Controller;
 
 import Tracker.Util.HibernateUtil;
 import Tracker.VO.Estado;
-import Tracker.VO.Tracker;
 import Tracker.VO.TrackerKeepAlive;
 import Tracker.VO.TypeMessage;
 import org.apache.activemq.command.ActiveMQMapMessage;
@@ -142,19 +141,6 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
         }
         eligiendoMaster = false;
     }
-    private void calcularID(String id)
-    {
-        String candidateID = UUID.randomUUID().toString().replace("-", "");
-        String tempID;
-        for (TrackerKeepAlive activeTracker : trackersActivos.values()) {
-            tempID = activeTracker.getId();
-            if (tempID.compareTo(candidateID)>0) {
-                candidateID = UUID.randomUUID().toString().replace("-", "");
-            }
-        }
-        JMSManager.getInstance().enviarMensajeIdIncorrecto(id, String.valueOf(candidateID));
-    }
-
     private void crearNuevaBBDD()
     {
         Session session = HibernateUtil.changeDatabase("jdbc:sqlite:tracker_"+TrackerService.getInstance().getTracker().getId()+".db").openSession();
@@ -235,16 +221,6 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
             esperandoID = false;
         }
     }
-    public void idIncorrecto(Object[] datos){
-        String idPropuesto = (String) datos[0];
-        String idInicial = (String) datos[1];
-        if (idInicial.equals(TrackerService.getInstance().getTracker().getId()) && esperandoID) {
-            TrackerService.getInstance().getTracker().setId(idPropuesto);
-            TrackerService.getInstance().getTracker().setMaster(false);
-            esperandoID = false;
-        }
-    }
-
     /**
      * Este método se encarga de comprobar cada vez que recibe un ready de comprobar si ya están todos preparados y cuando son suficientes, confirma la update de la BBDD
      * @param datos
@@ -306,13 +282,11 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
                         keepAlive(data.toArray());
                         break;
                     case BackUp:
-                        actualizarBBDD((byte[])data.toArray()[0]);
+                        if(data.toArray()[1].equals(TrackerService.getInstance().getTracker().getId()))
+                            actualizarBBDD((byte[])data.toArray()[0]);
                         break;
                     case CorrectId:
                         idCorrecto(data.toArray());
-                        break;
-                    case IncorrectId:
-                        idIncorrecto(data.toArray());
                         break;
                     case ReadyToStore:
                         comprobarSiEstanPreparados(data.toArray());

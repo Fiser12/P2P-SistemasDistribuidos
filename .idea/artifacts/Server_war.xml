@@ -3,6 +3,11 @@
     <output-path>$PROJECT_DIR$/Tracker/target</output-path>
     <root id="archive" name="Server-1.0-SNAPSHOT.war">
       <element id="artifact" artifact-name="Server:war exploded" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="P2P-SistemasDistribuidos" />
+        </element>
+      </element>
     </root>
   </artifact>
 </component>

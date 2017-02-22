@@ -1,7 +1,11 @@
 package Tracker.Util;
 
+import Tracker.Controller.TrackerService;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+
+import java.io.File;
+import java.io.IOException;
 
 public class HibernateUtil {
 
@@ -33,4 +37,8 @@ public class HibernateUtil {
         return sessionFactory;
     }
 
+    public static void removeDatabase() {
+        File file = new File("tracker_" + TrackerService.getInstance().getTracker().getId() + ".db");
+        file.delete();
+    }
 }

@@ -18,21 +18,19 @@ public class JMSManager {
     private static JMSManager instance = null;
     private List<TopicPublisher> topicPublishers = null;
     private List<TopicSubscriber> topicSubscribers = null;
-    private Context context1 = null;
-    private Context context2 = null;
+    private Context context = null;
 
     private TopicConnection topicConnection = null;
     private TopicSession topicSession = null;
     private TopicConnectionFactory topicConnectionFactory = null;
 
-    private QueueReceiver queueReceiver;
 
     private JMSManager() {
         topicPublishers = new ArrayList<TopicPublisher>();
         topicSubscribers = new ArrayList<TopicSubscriber>();
         try {
-            context1 = new InitialContext();
-            topicConnectionFactory = (TopicConnectionFactory) context1.lookup("TopicConnectionFactory");
+            context = new InitialContext();
+            topicConnectionFactory = (TopicConnectionFactory) context.lookup("TopicConnectionFactory");
             topicConnection = topicConnectionFactory.createTopicConnection();
             topicSession = topicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
         } catch (NamingException e) {
@@ -61,13 +59,12 @@ public class JMSManager {
             lista.add(UtilController.JNDINameKeepAlive);
             lista.add(UtilController.JNDIReadyToStore);
             lista.add(UtilController.JNDIConfirmToStore);
-            lista.add(UtilController.JNDIIncorrectId);
             lista.add(UtilController.JNDICorrectId);
             lista.add(UtilController.JNDISendBBDD);
 
             if (instance != null) {
                 for(String add: lista) {
-                    Topic topicMensajes = (Topic) context1.lookup(add);
+                    Topic topicMensajes = (Topic) context.lookup(add);
                     TopicSubscriber topicSubscriber = topicSession.createSubscriber(topicMensajes);
                     topicSubscribers.add(topicSubscriber);
                     topicSubscriber.setMessageListener(suscribir);
@@ -82,7 +79,7 @@ public class JMSManager {
     public void enviarMensajeKeepAlive() {
         try {
             if (instance != null) {
-                Topic topicKeepAliveMessages = (Topic) context1.lookup(UtilController.JNDINameKeepAlive);
+                Topic topicKeepAliveMessages = (Topic) context.lookup(UtilController.JNDINameKeepAlive);
                 TopicPublisher topicPublisher = topicSession.createPublisher(topicKeepAliveMessages);
                 topicPublishers.add(topicPublisher);
                 MapMessage mapMessage = topicSession.createMapMessage();
@@ -100,30 +97,10 @@ public class JMSManager {
         }
 
     }
-    public void enviarMensajeIdIncorrecto(String idInicial, String idPropuesto) {
-        try {
-            if (instance != null) {
-                Topic topicIncorrectIdMessages = (Topic) context1.lookup(UtilController.JNDIIncorrectId);
-                TopicPublisher topicPublisher = topicSession.createPublisher(topicIncorrectIdMessages);
-                topicPublishers.add(topicPublisher);
-                MapMessage mapMessage = topicSession.createMapMessage();
-                mapMessage.setStringProperty("Type", TypeMessage.IncorrectId.toString());
-                mapMessage.setString("IdInicial", idInicial);
-                mapMessage.setString("IdPropuesto", idPropuesto);
-                topicPublisher.publish(mapMessage);
-            }
-        } catch (JMSException e) {
-            System.err.println("JMS Exception - IncorrectID");
-            e.printStackTrace();
-        } catch (NamingException e) {
-            System.err.println("NamingException - IncorrectID");
-            e.printStackTrace();
-        }
-    }
     public void enviarMensajeIdCorrecto(String idDestino) {
         try {
             if (instance != null) {
-                Topic topicCorrectIdMessages = (Topic) context1.lookup(UtilController.JNDICorrectId);
+                Topic topicCorrectIdMessages = (Topic) context.lookup(UtilController.JNDICorrectId);
                 TopicPublisher topicPublisher = topicSession.createPublisher(topicCorrectIdMessages);
                 topicPublishers.add(topicPublisher);
                 MapMessage mapMessage;
@@ -143,8 +120,8 @@ public class JMSManager {
     }
     public void enviarBBDD(String destino) {
             try {
-                    if (instance != null) {
-                    Topic topicEnviarBBDD = (Topic) context1.lookup(UtilController.JNDISendBBDD);
+                if (instance != null) {
+                    Topic topicEnviarBBDD = (Topic) context.lookup(UtilController.JNDISendBBDD);
                     TopicPublisher topicPublisher = topicSession.createPublisher(topicEnviarBBDD);
                     topicPublishers.add(topicPublisher);
                     MapMessage mapMessage;
@@ -162,11 +139,11 @@ public class JMSManager {
                 e.printStackTrace();
             }
 
-}
+    }
     public void confirmacionListoParaGuardar() {
         try {
             if (instance != null) {
-                Topic topicReady = (Topic) context1.lookup(UtilController.JNDIReadyToStore);
+                Topic topicReady = (Topic) context.lookup(UtilController.JNDIReadyToStore);
                 TopicPublisher topicPublisher = topicSession.createPublisher(topicReady);
                 topicPublishers.add(topicPublisher);
                 MapMessage mapMessage = topicSession.createMapMessage();
@@ -203,7 +180,7 @@ public class JMSManager {
     public void confirmacionActualizarBBDD() {
         try {
             if (instance != null) {
-                Topic topicConfirm = (Topic) context1.lookup(UtilController.JNDIConfirmToStore);
+                Topic topicConfirm = (Topic) context.lookup(UtilController.JNDIConfirmToStore);
                 TopicPublisher topicPublisher = topicSession.createPublisher(topicConfirm);
                 topicPublishers.add(topicPublisher);
                 MapMessage mapMessage = topicSession.createMapMessage();
