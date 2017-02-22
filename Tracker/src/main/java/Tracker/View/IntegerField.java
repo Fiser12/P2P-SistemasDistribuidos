@@ -39,11 +39,11 @@ public class IntegerField extends JTextField {
             char[] chars = str.toCharArray();
             boolean ok = true;
 
-            for ( int i = 0; i < chars.length; i++ ) {
+            for (char aChar : chars) {
 
                 try {
-                    Integer.parseInt( String.valueOf( chars[i] ) );
-                } catch ( NumberFormatException exc ) {
+                    Integer.parseInt(String.valueOf(aChar));
+                } catch (NumberFormatException exc) {
                     ok = false;
                     break;
                 }
@@ -57,7 +57,7 @@ public class IntegerField extends JTextField {
         }
     }
     public int getNumber(){
-        String numero = new String(getText());
+        String numero = getText();
         return Integer.parseInt(numero);
     }
 

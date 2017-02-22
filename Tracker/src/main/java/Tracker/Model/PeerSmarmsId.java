@@ -35,11 +35,8 @@ public class PeerSmarmsId implements java.io.Serializable, Observable {
 
         PeerSmarmsId that = (PeerSmarmsId) o;
         if (smarms != null ? !smarms.equals(that.smarms) : that.smarms != null) return false;
-        if (peer != null ? !peer.equals(that.peer) : that.peer != null)
-            return false;
-
-        return true;
-    }
+		return peer != null ? peer.equals(that.peer) : that.peer == null;
+	}
     public int hashCode() {
         int result;
         result = (smarms != null ? smarms.hashCode() : 0);

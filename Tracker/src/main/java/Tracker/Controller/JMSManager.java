@@ -25,11 +25,6 @@ public class JMSManager {
     private TopicSession topicSession = null;
     private TopicConnectionFactory topicConnectionFactory = null;
 
-    private QueueConnectionFactory queueConnectionFactory;
-    private QueueConnection queueConnection;
-    private QueueSession queueSession;
-    private Queue queueTrackersManagement;
-    private QueueSender queueSender;
     private QueueReceiver queueReceiver;
 
     private JMSManager() {
@@ -45,20 +40,6 @@ public class JMSManager {
             e.printStackTrace();
         } catch (JMSException e) {
             System.err.println("JMS Exception - JMSManager Constructor 1");
-            e.printStackTrace();
-        }
-        try {
-            context2 = new InitialContext();
-            queueConnectionFactory = (QueueConnectionFactory) context2.lookup("QueueConnectionFactory");
-            queueConnection = queueConnectionFactory.createQueueConnection();
-            queueSession = queueConnection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
-            queueTrackersManagement = (Queue) context2.lookup("jndi.ssdd.trackersmanagement");
-            queueSender = queueSession.createSender(queueTrackersManagement);
-        } catch (NamingException e) {
-            System.err.println("NamingException - JMSManager Constructor 2");
-            e.printStackTrace();
-        } catch (JMSException e) {
-            System.err.println("JMS Exception - JMSManager Constructor 2");
             e.printStackTrace();
         }
     }
@@ -82,6 +63,7 @@ public class JMSManager {
             lista.add(UtilController.JNDIConfirmToStore);
             lista.add(UtilController.JNDIIncorrectId);
             lista.add(UtilController.JNDICorrectId);
+            lista.add(UtilController.JNDISendBBDD);
 
             if (instance != null) {
                 for(String add: lista) {
@@ -97,17 +79,6 @@ public class JMSManager {
             System.err.println("NamingException - Suscribir");
         }
     }
-    public void recibirMensajesParaMiId(GestorRedundancia gestor){
-        try {
-            if (instance != null) {
-                queueReceiver = queueSession.createReceiver(queueTrackersManagement, "Destino = '" + TrackerService.getInstance().getTracker().getId() + "'");
-                queueReceiver.setMessageListener(gestor);
-            }
-        } catch (JMSException e) {
-            System.err.println("JMS Exception - Recibir Mensajes para mi id");
-        }
-    }
-
     public void enviarMensajeKeepAlive() {
         try {
             if (instance != null) {
@@ -152,8 +123,8 @@ public class JMSManager {
     public void enviarMensajeIdCorrecto(String idDestino) {
         try {
             if (instance != null) {
-                Topic topicIncorrectIdMessages = (Topic) context1.lookup(UtilController.JNDICorrectId);
-                TopicPublisher topicPublisher = topicSession.createPublisher(topicIncorrectIdMessages);
+                Topic topicCorrectIdMessages = (Topic) context1.lookup(UtilController.JNDICorrectId);
+                TopicPublisher topicPublisher = topicSession.createPublisher(topicCorrectIdMessages);
                 topicPublishers.add(topicPublisher);
                 MapMessage mapMessage;
                 mapMessage = topicSession.createMapMessage();
@@ -171,20 +142,27 @@ public class JMSManager {
 
     }
     public void enviarBBDD(String destino) {
-        if (instance != null) {
-            MapMessage mapMessage;
             try {
-                mapMessage = queueSession.createMapMessage();
-                mapMessage.setStringProperty("Type", TypeMessage.BackUp.toString());
-                mapMessage.setStringProperty("Destino", destino);
-                mapMessage.setString("Id", destino);
-                mapMessage.setBytes("file", getBytesDatabase());
-                queueSender.send(mapMessage);
+                    if (instance != null) {
+                    Topic topicEnviarBBDD = (Topic) context1.lookup(UtilController.JNDISendBBDD);
+                    TopicPublisher topicPublisher = topicSession.createPublisher(topicEnviarBBDD);
+                    topicPublishers.add(topicPublisher);
+                    MapMessage mapMessage;
+                    mapMessage = topicSession.createMapMessage();
+                    mapMessage.setStringProperty("Type", TypeMessage.BackUp.toString());
+                    mapMessage.setString("Id", destino);
+                    mapMessage.setBytes("file", getBytesDatabase());
+                    topicPublisher.publish(mapMessage);
+                }
             } catch (JMSException e) {
-                System.err.println("JMS Exception - enviarBBDD");
+                System.err.println("JMS Exception - CorrectId");
+                e.printStackTrace();
+            } catch (NamingException e) {
+                System.err.println("NamingException - CorrectId");
+                e.printStackTrace();
             }
-        }
-    }
+
+}
     public void confirmacionListoParaGuardar() {
         try {
             if (instance != null) {
@@ -246,9 +224,6 @@ public class JMSManager {
     public void startTopic() throws JMSException {
         topicConnection.start();
     }
-    public void startQueue() throws JMSException {
-        queueConnection.start();
-    }
     public void close() {
         try {
             for (TopicSubscriber topicSubscriber : topicSubscribers) {
@@ -264,18 +239,5 @@ public class JMSManager {
         } catch (JMSException e) {
 
         }
-        try {
-            if (queueSender != null)
-                queueSender.close();
-            if (queueReceiver != null)
-                queueReceiver.close();
-            if (queueSession != null)
-                queueSession.close();
-            if (queueConnection != null)
-                queueConnection.close();
-        } catch (JMSException e) {
-
-        }
-
     }
 }

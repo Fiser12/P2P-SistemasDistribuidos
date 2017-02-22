@@ -2,6 +2,7 @@ package Tracker.Controller;
 
 import Tracker.Util.HibernateUtil;
 import Tracker.VO.Estado;
+import Tracker.VO.Tracker;
 import Tracker.VO.TrackerKeepAlive;
 import Tracker.VO.TypeMessage;
 import org.apache.activemq.command.ActiveMQMapMessage;
@@ -16,21 +17,22 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Fiser on 13/11/16.
  */
-public class GestorRedundancia implements Runnable, MessageListener {
+public class GestorRedundancia extends Observable implements Runnable, MessageListener {
     public boolean escuchandoPaquetes = true;
     public boolean pararHiloKeepAlive = false;
-    public boolean esperandoID = true;
+    public boolean esperandoID = false;
     public boolean pararComprobacionKeepAlive = false;
     public boolean eligiendoMaster = false;
-    private HashMap<String, TrackerKeepAlive> trackersActivos;
+    private ConcurrentHashMap<String, TrackerKeepAlive> trackersActivos;
 
     public GestorRedundancia()
     {
-        trackersActivos = new HashMap<String, TrackerKeepAlive>();
+        trackersActivos = new ConcurrentHashMap<String, TrackerKeepAlive>();
     }
 
     @Override
@@ -44,7 +46,6 @@ public class GestorRedundancia implements Runnable, MessageListener {
             while (escuchandoPaquetes) {
                 if (!eligiendoMaster) {
                     JMSManager.getInstance().startTopic();
-                    JMSManager.getInstance().startQueue();
                 }
             }
         } catch (JMSException e) {
@@ -79,8 +80,14 @@ public class GestorRedundancia implements Runnable, MessageListener {
     {
         Thread threadCheckKeepAliveMessages = new Thread() {
             public void run() {
-                eleccionDelMaster();
-                comprobarTrackersActivos();
+                try {
+                    Thread.sleep(8000);
+                    eleccionDelMaster();
+                    comprobarTrackersActivos();
+                } catch (InterruptedException e) {
+                    System.err.println("Error en el bucle ComprobarTrackers");
+                }
+
                 while (!pararComprobacionKeepAlive) {
                     try {
                         Thread.sleep(4000);
@@ -99,7 +106,8 @@ public class GestorRedundancia implements Runnable, MessageListener {
      */
     private void comprobarTrackersActivos()
     {
-        for (TrackerKeepAlive activeTracker : trackersActivos.values()) {
+        Collection<TrackerKeepAlive> lista = trackersActivos.values();
+        for (TrackerKeepAlive activeTracker : lista) {
             if (new Date().getTime() - activeTracker.getLastKeepAlive().getTime() >= 4000) {
                 boolean master = activeTracker.isMaster();
                 trackersActivos.remove(activeTracker.getId());
@@ -112,34 +120,36 @@ public class GestorRedundancia implements Runnable, MessageListener {
     private void eleccionDelMaster()
     {
         eligiendoMaster = true;
-        if (trackersActivos.size() == 0) {
-            TrackerService.getInstance().getTracker().setMaster(true);
-            crearNuevaBBDD();
-            JMSManager.getInstance().recibirMensajesParaMiId(this);
-        }
-        else{
-            boolean masterEncontrado = false;
-            for (Map.Entry<String, TrackerKeepAlive> entry : trackersActivos.entrySet())
-            {
+        boolean masterEncontrado = false;
+        for (Map.Entry<String, TrackerKeepAlive> entry : trackersActivos.entrySet())
+        {
+            if(entry.getValue().getId()!=TrackerService.getInstance().getTracker().getId()) {
                 if (entry.getValue().getId().compareTo(TrackerService.getInstance().getTracker().getId()) <= -1) {
                     TrackerService.getInstance().getTracker().setMaster(false);
                     masterEncontrado = true;
                     break;
                 }
+                if (entry.getValue().isMaster()) {
+                    TrackerService.getInstance().getTracker().setMaster(false);
+                    masterEncontrado = true;
+                    break;
+                }
             }
-            if(!masterEncontrado)
-                TrackerService.getInstance().getTracker().setMaster(true);
+        }
+        if(!masterEncontrado) {
+            TrackerService.getInstance().getTracker().setMaster(true);
+            crearNuevaBBDD();
         }
         eligiendoMaster = false;
     }
     private void calcularID(String id)
     {
-        int candidateID = Integer.parseInt(TrackerService.getInstance().getTracker().getId()) + 1;
-        int tempID;
+        String candidateID = UUID.randomUUID().toString().replace("-", "");
+        String tempID;
         for (TrackerKeepAlive activeTracker : trackersActivos.values()) {
-            tempID = Integer.parseInt(activeTracker.getId());
-            if (tempID == candidateID) {
-                candidateID++;
+            tempID = activeTracker.getId();
+            if (tempID.compareTo(candidateID)>0) {
+                candidateID = UUID.randomUUID().toString().replace("-", "");
             }
         }
         JMSManager.getInstance().enviarMensajeIdIncorrecto(id, String.valueOf(candidateID));
@@ -194,37 +204,33 @@ public class GestorRedundancia implements Runnable, MessageListener {
         boolean master = (Boolean) datos[0];
         String id = (String) datos[1];
         if (!esperandoID) {
-            if (trackersActivos.containsKey(id)) {
-                if (!TrackerService.getInstance().getTracker().getId().equals(id)) {
+                if (trackersActivos.containsKey(id)) {
                     TrackerKeepAlive activeTracker = trackersActivos.get(id);
                     activeTracker.setLastKeepAlive(new Date());
                     activeTracker.setMaster(master);
-                }
-            } else {
-                if (TrackerService.getInstance().getTracker().isMaster()&& id.compareTo(TrackerService.getInstance().getTracker().getId()) <= -1 && !master) {
-                    if (!id.equals(TrackerService.getInstance().getTracker().getId())) {
-                        JMSManager.getInstance().enviarMensajeIdCorrecto(id);
-                        JMSManager.getInstance().enviarBBDD(id);
+                    trackersActivos.put(id, activeTracker);
+                } else {
+                    if (TrackerService.getInstance().getTracker().isMaster()) {
+                        if (!id.equals(TrackerService.getInstance().getTracker().getId())) {
+                            JMSManager.getInstance().enviarMensajeIdCorrecto(id);
+                            JMSManager.getInstance().enviarBBDD(id);
+                        }
                     }
                     TrackerKeepAlive activeTracker = new TrackerKeepAlive();
-                    activeTracker.setActive(true);
                     activeTracker.setConfirmacionActualizacion(Estado.Esperando);
                     activeTracker.setId(id);
                     activeTracker.setLastKeepAlive(new Date());
                     activeTracker.setMaster(master);
                     trackersActivos.put(activeTracker.getId(), activeTracker);
-                } else {
-                    if (!master) {
-                        calcularID(id);
-                    }
-                }
             }
+            setChanged();
+            notifyObservers(trackersActivos);
         }
     }
+
     public void idCorrecto(Object[] datos){
         if (((String) datos[0]).equals(TrackerService.getInstance().getTracker().getId()) && esperandoID) {
             esperandoID = false;
-            JMSManager.getInstance().recibirMensajesParaMiId(this);
         }
     }
     public void idIncorrecto(Object[] datos){
@@ -232,8 +238,8 @@ public class GestorRedundancia implements Runnable, MessageListener {
         String idInicial = (String) datos[1];
         if (idInicial.equals(TrackerService.getInstance().getTracker().getId()) && esperandoID) {
             TrackerService.getInstance().getTracker().setId(idPropuesto);
+            TrackerService.getInstance().getTracker().setMaster(false);
             esperandoID = false;
-            JMSManager.getInstance().recibirMensajesParaMiId(this);
         }
     }
 

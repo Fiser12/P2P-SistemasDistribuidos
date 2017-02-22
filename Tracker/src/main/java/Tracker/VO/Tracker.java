@@ -25,20 +25,11 @@ public class Tracker {
     public void setId(String id) {
         this.id = id;
     }
-    public String getIpAddress() {
-        return ipAddress;
-    }
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
     }
-    public int getPort() {
-        return port;
-    }
     public void setPort(int port) {
         this.port = port;
-    }
-    public int getPortForPeers() {
-        return portForPeers;
     }
     public void setPortForPeers(int portForPeers) {
         this.portForPeers = portForPeers;

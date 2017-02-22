@@ -3,6 +3,8 @@ package Tracker.Controller;
 import Tracker.VO.Tracker;
 import Tracker.View.TrackerMain;
 
+import java.util.UUID;
+
 /**
  * Created by Fiser on 21/10/16.
  */
@@ -15,6 +17,7 @@ public class TrackerService {
     private TrackerService(){
         gestorRedundancia = new GestorRedundancia();
         ventana = new TrackerMain();
+        gestorRedundancia.addObserver(ventana);
         tracker = new Tracker();
     }
     public static TrackerService getInstance() {
@@ -25,7 +28,7 @@ public class TrackerService {
     }
 
     public void ejecutarVentana(){
-        ventana.launchWindow();
+        ventana.setVisible(true);
     }
     public Tracker getTracker() {
         return tracker;
@@ -35,11 +38,11 @@ public class TrackerService {
         this.tracker = tracker;
     }
 
-    public void connect(String ipAddress, int port, int portForPeers, String id) {
+    public void connect(String ipAddress, int port, int portForPeers) {
         gestorRedundancia.escuchandoPaquetes = true;
         gestorRedundancia.pararHiloKeepAlive = false;
         gestorRedundancia.pararComprobacionKeepAlive = false;
-        tracker.setId(id);
+        tracker.setId(UUID.randomUUID().toString().replace("-", ""));
         tracker.setPort(port);
         tracker.setPortForPeers(portForPeers);
         tracker.setIpAddress(ipAddress);

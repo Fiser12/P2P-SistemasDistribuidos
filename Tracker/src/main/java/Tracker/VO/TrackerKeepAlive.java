@@ -6,7 +6,6 @@ import java.util.Date;
 public class TrackerKeepAlive implements Comparator<Object> {
 
     private String id;
-    private boolean active;
     private Date lastKeepAlive;
     private boolean master;
 
@@ -18,10 +17,6 @@ public class TrackerKeepAlive implements Comparator<Object> {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public Date getLastKeepAlive() {
@@ -52,6 +47,7 @@ public class TrackerKeepAlive implements Comparator<Object> {
     public String toString() {
         return "Id: " + id + " Master: " + master;
     }
+
     @Override
     public int compare(Object o1, Object o2) {
         TrackerKeepAlive a = (TrackerKeepAlive) o1;
