@@ -8,6 +8,7 @@ public class TrackerKeepAlive implements Comparator<Object> {
     private String id;
     private Date lastKeepAlive;
     private boolean master;
+    private boolean iAm;
 
     private Estado confirmacionActualizacion;
 
@@ -60,5 +61,13 @@ public class TrackerKeepAlive implements Comparator<Object> {
             } else
                 return 0;
         }
+    }
+
+    public boolean isiAm() {
+        return iAm;
+    }
+
+    public void setiAm(boolean iAm) {
+        this.iAm = iAm;
     }
 }

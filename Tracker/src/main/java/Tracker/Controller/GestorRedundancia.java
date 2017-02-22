@@ -221,6 +221,8 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
                     activeTracker.setId(id);
                     activeTracker.setLastKeepAlive(new Date());
                     activeTracker.setMaster(master);
+                    if (id.equals(TrackerService.getInstance().getTracker().getId()))
+                        activeTracker.setiAm(true);
                     trackersActivos.put(activeTracker.getId(), activeTracker);
             }
             setChanged();

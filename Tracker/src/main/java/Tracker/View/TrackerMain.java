@@ -4,7 +4,9 @@ import Tracker.Controller.TrackerService;
 import Tracker.VO.TrackerKeepAlive;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,10 +29,8 @@ public class TrackerMain extends JFrame implements Observer {
     private JTable tableTrackers;
     private JTable tableSmarms;
     private JPanel mainPanel;
-    private IntegerField textFieldId;
     private JPanel smarmsPanel;
     private JPanel trackersPanel;
-    private DefaultTableModel tableModel;
     private String[] column_names_trackers= {"Id","Es Master","Ultima update", "Estado"};
     DefaultTableModel table_model_trackers=new DefaultTableModel(column_names_trackers,0);
     String column_names_smarms[]= {"Id","Tamaño en bytes","Pares conectados"};
@@ -42,14 +42,13 @@ public class TrackerMain extends JFrame implements Observer {
         setSize(700, 500);
         setMinimumSize(new Dimension(700, 400));
 
-        tableTrackers=new JTable(table_model_trackers);
         trackersPanel.add(tableTrackers.getTableHeader(), BorderLayout.NORTH);
         trackersPanel.add(tableTrackers, BorderLayout.CENTER);
         tableSmarms=new JTable(table_model_smarms);
+        tableTrackers.setDefaultRenderer(Object.class, new MyCellRenderer());
+
         smarmsPanel.add(tableSmarms.getTableHeader(), BorderLayout.NORTH);
         smarmsPanel.add(tableSmarms, BorderLayout.CENTER);
-
-        textFieldId.setText("1");
         portPeersTextField.setText("2000");
         portTextField.setText("3000");
         Start.addActionListener(new ActionListener() {
@@ -75,13 +74,34 @@ public class TrackerMain extends JFrame implements Observer {
             String[] temp = {activeTracker.getValue().getId(), (activeTracker.getValue().isMaster())?"Si":"No", activeTracker.getValue().getLastKeepAlive().toString(), activeTracker.getValue().getConfirmacionActualizacion().toString() };
             defaultTable.addRow(temp);
         }
-        tableTrackers.setModel(defaultTable);
-        tableTrackers.revalidate();
-        tableTrackers.repaint();
-    }
 
+        tableTrackers.setModel(defaultTable);
+        defaultTable.fireTableDataChanged();
+    }
     @Override
     public void update(Observable o, Object arg) {
-        actualizarInterfaz((ConcurrentHashMap<String, TrackerKeepAlive>)arg);
+        actualizarInterfaz((ConcurrentHashMap<String, TrackerKeepAlive>) arg);
     }
+    public class MyCellRenderer extends javax.swing.table.DefaultTableCellRenderer {
+
+        public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, java.lang.Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            final java.awt.Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            try {
+                Object val = table.getValueAt(row, 0);
+                String sval = val.toString();
+                if (sval.equals(TrackerService.getInstance().getTracker().getId())) {
+                    cellComponent.setForeground(Color.black);
+                    cellComponent.setBackground(Color.gray);
+                } else {
+                    cellComponent.setBackground(Color.white);
+                    cellComponent.setForeground(Color.black);
+                }
+            }catch(Exception e){
+            }
+            return cellComponent;
+        }
+
+    }
+
 }

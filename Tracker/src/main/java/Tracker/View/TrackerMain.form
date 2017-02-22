@@ -58,18 +58,6 @@
               <columns value="5"/>
             </properties>
           </component>
-          <component id="6980c" class="javax.swing.JLabel">
-            <constraints/>
-            <properties>
-              <text value="Id"/>
-            </properties>
-          </component>
-          <component id="9e6c6" class="Tracker.View.IntegerField" binding="textFieldId">
-            <constraints/>
-            <properties>
-              <columns value="4"/>
-            </properties>
-          </component>
           <component id="2c095" class="javax.swing.JButton" binding="Start">
             <constraints/>
             <properties>
