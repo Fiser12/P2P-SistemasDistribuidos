@@ -35,10 +35,8 @@ public class AnnounceResponse extends BitTorrentUDPMessage {
 
     @Override
     public byte[] getBytes() {
-        //TODO REVISAR
-        int startSize = 20;
-        int peerSize = 6;
-        int size = startSize + (peerSize * peers.size());
+        //TODO REVISAR TORRENT UTILS
+        int size = 20 + 6 * peers.size();
 
         ByteBuffer byteBuffer = ByteBuffer.allocate(size);
         byteBuffer.order(ByteOrder.BIG_ENDIAN);
@@ -48,13 +46,13 @@ public class AnnounceResponse extends BitTorrentUDPMessage {
         byteBuffer.putInt(12, getLeechers());
         byteBuffer.putInt(16, getSeeders());
 
-        int i = startSize;
+        int i = 20;
         for (PeerInfo p : peers) {
             int port = p.getPort();
             int ip = p.getIpAddress();
             byteBuffer.putInt(i, ip);
             byteBuffer.putShort(i + TorrentUtils.INT_SIZE, (short) port);
-            i += peerSize;
+            i += 6;
         }
         byteBuffer.flip();
         return byteBuffer.array();

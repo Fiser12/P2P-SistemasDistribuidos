@@ -50,24 +50,20 @@ public class ScrapeRequest extends BitTorrentUDPRequestMessage {
 
     public static ScrapeRequest parse(byte[] byteArray) {
         //TODO Revisar
-        int hashSize = 20;
-        int startSize = 16;
         ByteBuffer byteBuffer = ByteBuffer.wrap(byteArray);
         ScrapeRequest scrapeRequest = new ScrapeRequest();
         scrapeRequest.setConnectionId(byteBuffer.getLong(0));
         scrapeRequest.setAction(Action.valueOf(byteBuffer.getInt(8)));
         scrapeRequest.setTransactionId(byteBuffer.getInt(12));
 
-        int index = 16;
         boolean error = false;
 
-        for (index = startSize; index < byteArray.length && !error; index += hashSize) {
-            byte[] infoBytes = new byte[hashSize];
+        for (int index = 16; index < byteArray.length && !error; index += 20) {
+            byte[] infoBytes = new byte[20];
             byteBuffer.position(index);
             byteBuffer.get(infoBytes);
             String infoHash = StringUtils.toHexString(infoBytes);
-            boolean notEmpty = !infoHash.matches("[0]+");
-            if (notEmpty) {
+            if (!infoHash.matches("[0]+")) {
                 scrapeRequest.addInfoHash(infoHash);
             } else {
                 error = true;

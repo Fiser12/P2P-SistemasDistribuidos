@@ -38,8 +38,7 @@ public class Error extends BitTorrentUDPMessage {
     public byte[] getBytes() {
         //TODO Revisar
 
-        int startSize = 8;
-        int size = startSize + message.getBytes().length;
+        int size = 8 + message.getBytes().length;
         ByteBuffer byteBuffer = ByteBuffer.allocate(size);
         byteBuffer.order(ByteOrder.BIG_ENDIAN);
         byteBuffer.putInt(0, getAction().value());

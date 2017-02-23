@@ -46,9 +46,9 @@ public class AnnounceRequest extends BitTorrentUDPRequestMessage {
         //TODO REVISAR
         try {
             ByteBuffer byteBuffer = ByteBuffer.wrap(byteArray);
-            byteBuffer.order(ByteOrder.BIG_ENDIAN);
-
             AnnounceRequest announceRequest = new AnnounceRequest();
+
+            byteBuffer.order(ByteOrder.BIG_ENDIAN);
             byte[] hash = new byte[20];
             byte[] idPeer = new byte[20];
             announceRequest.setConnectionId(byteBuffer.getLong(0));
@@ -62,7 +62,7 @@ public class AnnounceRequest extends BitTorrentUDPRequestMessage {
             byteBuffer.position(36);
             byteBuffer.get(idPeer);
 
-            announceRequest.setPeerId(String.valueOf(ByteBuffer.wrap(idPeer).getInt()));
+            announceRequest.setPeerId( new String( idPeer ) );
             announceRequest.setDownloaded(byteBuffer.getLong(56));
             announceRequest.setLeft(byteBuffer.getLong(64));
             announceRequest.setUploaded(byteBuffer.getLong(72));
