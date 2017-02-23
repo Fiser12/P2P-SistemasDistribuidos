@@ -29,44 +29,43 @@ public class ScrapeRequest extends BitTorrentUDPRequestMessage {
     @Override
     public byte[] getBytes() {
         //TODO Revisar
-        int infoHashSize = 20;
-        int initialSize = 16;
-
-        int size = initialSize + infoHashSize * infoHashes.size();
+        int hashSize = 20;
+        int startSize = 16;
+        int size = startSize + hashSize * infoHashes.size();
 
         ByteBuffer byteBuffer = ByteBuffer.allocate(size);
         byteBuffer.order(ByteOrder.BIG_ENDIAN);
-
         byteBuffer.putLong(0, getConnectionId());
         byteBuffer.putInt(8, getAction().value());
         byteBuffer.putInt(12, getTransactionId());
-        int inicio = infoHashSize;
-        for (String infoHash : this.infoHashes) {
-            byteBuffer.position(inicio);
-            byteBuffer.put(infoHash.getBytes());
-            inicio += infoHashSize;
-        }
+        int start = hashSize;
 
+        for (String infoHash : this.infoHashes) {
+            byteBuffer.position(start);
+            byteBuffer.put(infoHash.getBytes());
+            start += hashSize;
+        }
         return byteBuffer.array();
     }
 
     public static ScrapeRequest parse(byte[] byteArray) {
         //TODO Revisar
-        int infoHashSize = 20;
-        int initialSize = 16;
-
-        ByteBuffer bufferData = ByteBuffer.wrap(byteArray);
+        int hashSize = 20;
+        int startSize = 16;
+        ByteBuffer byteBuffer = ByteBuffer.wrap(byteArray);
         ScrapeRequest scrapeRequest = new ScrapeRequest();
-        scrapeRequest.setConnectionId(bufferData.getLong(0));
-        scrapeRequest.setAction(Action.valueOf(bufferData.getInt(8)));
-        scrapeRequest.setTransactionId(bufferData.getInt(12));
+        scrapeRequest.setConnectionId(byteBuffer.getLong(0));
+        scrapeRequest.setAction(Action.valueOf(byteBuffer.getInt(8)));
+        scrapeRequest.setTransactionId(byteBuffer.getInt(12));
+
         int index = 16;
         boolean error = false;
-        for (index = initialSize; index < byteArray.length && !error; index += infoHashSize) {
-            byte[] infoHashBytes = new byte[infoHashSize];
-            bufferData.position(index);
-            bufferData.get(infoHashBytes);
-            String infoHash = StringUtils.toHexString(infoHashBytes);
+
+        for (index = startSize; index < byteArray.length && !error; index += hashSize) {
+            byte[] infoBytes = new byte[hashSize];
+            byteBuffer.position(index);
+            byteBuffer.get(infoBytes);
+            String infoHash = StringUtils.toHexString(infoBytes);
             boolean notEmpty = !infoHash.matches("[0]+");
             if (notEmpty) {
                 scrapeRequest.addInfoHash(infoHash);

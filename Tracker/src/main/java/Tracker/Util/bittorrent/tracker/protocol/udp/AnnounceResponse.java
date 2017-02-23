@@ -36,30 +36,28 @@ public class AnnounceResponse extends BitTorrentUDPMessage {
     @Override
     public byte[] getBytes() {
         //TODO REVISAR
-        int initialSize = 20;
+        int startSize = 20;
         int peerSize = 6;
+        int size = startSize + (peerSize * peers.size());
 
-        int messageSize = initialSize + peerSize * peers.size();
-        ByteBuffer buffer = ByteBuffer.allocate(messageSize);
-        buffer.order(ByteOrder.BIG_ENDIAN);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(size);
+        byteBuffer.order(ByteOrder.BIG_ENDIAN);
+        byteBuffer.putInt(0, getAction().value());
+        byteBuffer.putInt(4, getTransactionId());
+        byteBuffer.putInt(8, getInterval());
+        byteBuffer.putInt(12, getLeechers());
+        byteBuffer.putInt(16, getSeeders());
 
-        buffer.putInt(0, getAction().value());
-        buffer.putInt(4, getTransactionId());
-        buffer.putInt(8, getInterval());
-        buffer.putInt(12, getLeechers());
-        buffer.putInt(16, getSeeders());
-
-        int index = initialSize;
+        int i = startSize;
         for (PeerInfo p : peers) {
             int port = p.getPort();
             int ip = p.getIpAddress();
-            buffer.putInt(index, ip);
-            buffer.putShort(index + TorrentUtils.INT_SIZE, (short) port);
-            index += peerSize;
+            byteBuffer.putInt(i, ip);
+            byteBuffer.putShort(i + TorrentUtils.INT_SIZE, (short) port);
+            i += peerSize;
         }
-
-        buffer.flip();
-        return buffer.array();
+        byteBuffer.flip();
+        return byteBuffer.array();
     }
     public static AnnounceResponse parse(byte[] byteArray) {
         int initialSize = 20;

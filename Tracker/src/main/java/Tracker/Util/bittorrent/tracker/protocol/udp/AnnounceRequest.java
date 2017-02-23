@@ -45,38 +45,39 @@ public class AnnounceRequest extends BitTorrentUDPRequestMessage {
     public static AnnounceRequest parse(byte[] byteArray) {
         //TODO REVISAR
         try {
-            ByteBuffer buffer = ByteBuffer.wrap(byteArray);
-            buffer.order(ByteOrder.BIG_ENDIAN);
+            ByteBuffer byteBuffer = ByteBuffer.wrap(byteArray);
+            byteBuffer.order(ByteOrder.BIG_ENDIAN);
 
-            AnnounceRequest msg = new AnnounceRequest();
-            byte[] infoHash = new byte[20];
-            byte[] peerId = new byte[20];
+            AnnounceRequest announceRequest = new AnnounceRequest();
+            byte[] hash = new byte[20];
+            byte[] idPeer = new byte[20];
+            announceRequest.setConnectionId(byteBuffer.getLong(0));
+            announceRequest.setAction(Action.valueOf(byteBuffer.getInt(8)));
+            announceRequest.setTransactionId(byteBuffer.getInt(12));
+            byteBuffer.position(16);
 
-            msg.setConnectionId(buffer.getLong(0));
-            msg.setAction(Action.valueOf(buffer.getInt(8)));
-            msg.setTransactionId(buffer.getInt(12));
-            buffer.position(16);
-            buffer.get(infoHash);
-            msg.setInfoHash(infoHash);
-            buffer.position(36);
-            buffer.get(peerId);
-            msg.setPeerId(ByteBuffer.wrap(peerId).getInt()+"");
-            msg.setDownloaded(buffer.getLong(56));
-            msg.setLeft(buffer.getLong(64));
-            msg.setUploaded(buffer.getLong(72));
-            msg.setEvent(Event.values()[(buffer.getInt(80))]);
+            byteBuffer.get(hash);
+            announceRequest.setInfoHash(hash);
 
-            PeerInfo info = new PeerInfo();
-            info.setIpAddress(buffer.getInt(84));
-            info.setPort(buffer.getShort(96));
-            msg.setPeerInfo(info);
+            byteBuffer.position(36);
+            byteBuffer.get(idPeer);
 
-            msg.setKey(buffer.getInt(88));
-            msg.setNumWant(buffer.getInt(92));
+            announceRequest.setPeerId(String.valueOf(ByteBuffer.wrap(idPeer).getInt()));
+            announceRequest.setDownloaded(byteBuffer.getLong(56));
+            announceRequest.setLeft(byteBuffer.getLong(64));
+            announceRequest.setUploaded(byteBuffer.getLong(72));
+            announceRequest.setEvent(Event.values()[(byteBuffer.getInt(80))]);
 
-            return msg;
+            PeerInfo peerInfo = new PeerInfo();
+            peerInfo.setIpAddress(byteBuffer.getInt(84));
+            peerInfo.setPort(byteBuffer.getShort(96));
+            announceRequest.setPeerInfo(peerInfo);
+            announceRequest.setKey(byteBuffer.getInt(88));
+            announceRequest.setNumWant(byteBuffer.getInt(92));
+
+            return announceRequest;
         } catch (Exception ex) {
-            System.out.println("# Error parsing ConnectRequest message: " + ex.getMessage());
+            System.out.println("# ERROR PARSE ANNOUNCE REQUEST " + ex.getMessage());
         }
         return null;
     }

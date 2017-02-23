@@ -22,14 +22,15 @@ public class Error extends BitTorrentUDPMessage {
 
     public static Error parse(byte[] byteArray) {
         //TODO Revisar
-        ByteBuffer bufferReceive = ByteBuffer.wrap(byteArray);
+        ByteBuffer byteBuffer = ByteBuffer.wrap(byteArray);
         Error error = new Error();
-        error.setAction(Action.valueOf(bufferReceive.getInt(0)));
-        error.setTransactionId(bufferReceive.getInt(TorrentUtils.INT_SIZE));
-        byte[] messageData = new byte[byteArray.length - 8];
-        bufferReceive.position(8);
-        bufferReceive.get(messageData);
-        error.setMessage(new String(messageData));
+        error.setAction(Action.valueOf(byteBuffer.getInt(0)));
+        error.setTransactionId(byteBuffer.getInt(TorrentUtils.INT_SIZE));
+
+        byte[] data = new byte[byteArray.length - 8];
+        byteBuffer.position(8);
+        byteBuffer.get(data);
+        error.setMessage(new String(data));
         return error;
     }
 
@@ -37,17 +38,16 @@ public class Error extends BitTorrentUDPMessage {
     public byte[] getBytes() {
         //TODO Revisar
 
-        int initialSize = 8;
-        int size = initialSize + message.getBytes().length;
+        int startSize = 8;
+        int size = startSize + message.getBytes().length;
         ByteBuffer byteBuffer = ByteBuffer.allocate(size);
         byteBuffer.order(ByteOrder.BIG_ENDIAN);
-
         byteBuffer.putInt(0, getAction().value());
         byteBuffer.putInt(4, getTransactionId());
         byteBuffer.position(8);
         byteBuffer.put(message.getBytes());
-
         byteBuffer.flip();
+
         return byteBuffer.array();
     }
 
