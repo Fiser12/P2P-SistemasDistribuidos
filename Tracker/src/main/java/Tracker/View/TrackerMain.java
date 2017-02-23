@@ -1,5 +1,6 @@
 package Tracker.View;
 
+import Tracker.Controller.JMSManager;
 import Tracker.Controller.TrackerService;
 import Tracker.Util.HibernateUtil;
 import Tracker.VO.TrackerKeepAlive;
@@ -69,6 +70,7 @@ public class TrackerMain extends JFrame implements Observer {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 TrackerService.getInstance().disconnect();
+                JMSManager.getInstance().close();
                 HibernateUtil.removeDatabase();
             }
         });

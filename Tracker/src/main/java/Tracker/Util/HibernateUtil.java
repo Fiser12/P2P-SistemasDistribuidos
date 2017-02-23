@@ -4,7 +4,9 @@ import Tracker.Controller.TrackerService;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 public class HibernateUtil {
@@ -36,9 +38,27 @@ public class HibernateUtil {
         sessionFactory = cfg.buildSessionFactory();
         return sessionFactory;
     }
-
     public static void removeDatabase() {
         File file = new File("tracker_" + TrackerService.getInstance().getTracker().getId() + ".db");
         file.delete();
     }
+    public static byte[] getBytesDatabase(){
+        File file = new File("tracker_" + TrackerService.getInstance().getTracker().getId() + ".db");
+        byte[] bytes = null;
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(file);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            byte[] buf = new byte[1024];
+            for (int readNum; (readNum = fis.read(buf)) != -1;) {
+                bos.write(buf, 0, readNum);
+            }
+            bytes = bos.toByteArray();
+            fis.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bytes;
+    }
+
 }

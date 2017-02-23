@@ -1,5 +1,6 @@
 package Tracker.Controller;
 
+import Tracker.Util.HibernateUtil;
 import Tracker.Util.UtilController;
 import Tracker.VO.TypeMessage;
 
@@ -95,7 +96,6 @@ public class JMSManager {
             System.err.println("NamingException - KeepAlive");
             e.printStackTrace();
         }
-
     }
     public void enviarMensajeIdCorrecto(String idDestino) {
         try {
@@ -116,7 +116,6 @@ public class JMSManager {
             System.err.println("NamingException - CorrectId");
             e.printStackTrace();
         }
-
     }
     public void enviarBBDD(String destino) {
             try {
@@ -128,7 +127,7 @@ public class JMSManager {
                     mapMessage = topicSession.createMapMessage();
                     mapMessage.setStringProperty("Type", TypeMessage.BackUp.toString());
                     mapMessage.setString("Id", destino);
-                    mapMessage.setBytes("file", getBytesDatabase());
+                    mapMessage.setBytes("file", HibernateUtil.getBytesDatabase());
                     topicPublisher.publish(mapMessage);
                 }
             } catch (JMSException e) {
@@ -138,7 +137,25 @@ public class JMSManager {
                 System.err.println("NamingException - CorrectId");
                 e.printStackTrace();
             }
-
+    }
+    public void solicitarCambioBBDD() {
+        try {
+            if (instance != null) {
+                Topic topicConfirm = (Topic) context.lookup(UtilController.JNDISoliciteChangeBBDD);
+                TopicPublisher topicPublisher = topicSession.createPublisher(topicConfirm);
+                topicPublishers.add(topicPublisher);
+                MapMessage mapMessage = topicSession.createMapMessage();
+                mapMessage.setStringProperty("Type", TypeMessage.SolicitaCambioBBDD.toString());
+                mapMessage.setString("Id", TrackerService.getInstance().getTracker().getId());
+                topicPublisher.publish(mapMessage);
+            }
+        } catch (JMSException e) {
+            System.err.println("JMS Exception - Manda mensaje para guardar");
+            e.printStackTrace();
+        } catch (NamingException e) {
+            System.err.println("NamingException - Manda mensaje para guardar");
+            e.printStackTrace();
+        }
     }
     public void confirmacionListoParaGuardar() {
         try {
@@ -149,6 +166,7 @@ public class JMSManager {
                 MapMessage mapMessage = topicSession.createMapMessage();
                 mapMessage.setStringProperty("Type", TypeMessage.ReadyToStore.toString());
                 mapMessage.setString("Id", TrackerService.getInstance().getTracker().getId());
+                mapMessage.setBoolean("Listo", true);
                 topicPublisher.publish(mapMessage);
             }
         } catch (JMSException e) {
@@ -159,23 +177,25 @@ public class JMSManager {
             e.printStackTrace();
         }
     }
-    private byte[] getBytesDatabase(){
-        File file = new File("tracker_" + TrackerService.getInstance().getTracker().getId() + ".db");
-        byte[] bytes = null;
-        FileInputStream fis = null;
+    public void rechazoListoParaGuardar() {
         try {
-            fis = new FileInputStream(file);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            byte[] buf = new byte[1024];
-            for (int readNum; (readNum = fis.read(buf)) != -1;) {
-                bos.write(buf, 0, readNum);
+            if (instance != null) {
+                Topic topicReady = (Topic) context.lookup(UtilController.JNDIReadyToStore);
+                TopicPublisher topicPublisher = topicSession.createPublisher(topicReady);
+                topicPublishers.add(topicPublisher);
+                MapMessage mapMessage = topicSession.createMapMessage();
+                mapMessage.setStringProperty("Type", TypeMessage.ReadyToStore.toString());
+                mapMessage.setString("Id", TrackerService.getInstance().getTracker().getId());
+                mapMessage.setBoolean("Listo", false);
+                topicPublisher.publish(mapMessage);
             }
-            bytes = bos.toByteArray();
-            fis.close();
-        } catch (IOException e) {
+        } catch (JMSException e) {
+            System.err.println("JMS Exception - Manda mensaje para guardar");
+            e.printStackTrace();
+        } catch (NamingException e) {
+            System.err.println("NamingException - Manda mensaje para guardar");
             e.printStackTrace();
         }
-        return bytes;
     }
     public void confirmacionActualizarBBDD() {
         try {
@@ -186,7 +206,7 @@ public class JMSManager {
                 MapMessage mapMessage = topicSession.createMapMessage();
                 mapMessage.setStringProperty("Type", TypeMessage.ConfirmToStore.toString());
                 mapMessage.setString("Id", TrackerService.getInstance().getTracker().getId());
-                mapMessage.setBytes("file", getBytesDatabase());
+                mapMessage.setBytes("file", HibernateUtil.getBytesDatabase());
                 topicPublisher.publish(mapMessage);
             }
         } catch (JMSException e) {
@@ -197,7 +217,6 @@ public class JMSManager {
             e.printStackTrace();
         }
     }
-
     public void startTopic() throws JMSException {
         topicConnection.start();
     }

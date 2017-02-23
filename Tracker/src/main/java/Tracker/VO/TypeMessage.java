@@ -8,6 +8,6 @@ public enum TypeMessage {
     BackUp,
     ConfirmToStore,
     CorrectId,
-    IncorrectId,
+    SolicitaCambioBBDD,
     ReadyToStore;
 }

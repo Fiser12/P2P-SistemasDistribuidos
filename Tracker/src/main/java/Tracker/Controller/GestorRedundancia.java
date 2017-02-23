@@ -228,29 +228,52 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
     private void comprobarSiEstanPreparados(Object[] datos)
     {
         if (TrackerService.getInstance().getTracker().isMaster()) {
-
-            String id = (String) datos[0];
+            Boolean listo = (Boolean) datos[0];
+            String id = (String) datos[1];
             TrackerKeepAlive tracker = trackersActivos.get(id);
-            tracker.setConfirmacionActualizacion(Estado.Confirmado);
+
+            //Establecemos el estado
+            if(listo)
+                tracker.setConfirmacionActualizacion(Estado.Confirmado);
+            else
+                tracker.setConfirmacionActualizacion(Estado.Rechazado);
 
             int confirmados = 0;
+            int rechazados = 0;
             for (TrackerKeepAlive trackerTemp : trackersActivos.values()) {
                 if (trackerTemp.getConfirmacionActualizacion() == Estado.Confirmado) {
                     confirmados++;
+                }else if(trackerTemp.getConfirmacionActualizacion() == Estado.Rechazado){
+                    rechazados++;
                 }
             }
-            if (confirmados == trackersActivos.size()) {
+            //Miramos que todos hayan respondido si o no
+            if (confirmados+rechazados == trackersActivos.size()-1) {
+                if(confirmados>rechazados) {
+                    /**
+                     * TODO Guardar los nuevos datos en la BBDD
+                     */
+                    JMSManager.getInstance().confirmacionActualizarBBDD();
+                }else{
+                    //GESTIONAR NEGATIVA AL PEER
+                }
                 for (TrackerKeepAlive trackerTemp : trackersActivos.values()) {
                     trackerTemp.setConfirmacionActualizacion(Estado.Esperando);
                 }
-                /**
-                 * TODO Guardar los nuevos datos en la BBDD
-                 */
-                JMSManager.getInstance().confirmacionActualizarBBDD();
             }
         }
     }
-
+    public void cambioEnBBDD()
+    {
+        JMSManager.getInstance().solicitarCambioBBDD();
+    }
+    private void respuestaACambio(){
+        if(escuchandoPaquetes&&!eligiendoMaster&&!esperandoID){
+            JMSManager.getInstance().confirmacionListoParaGuardar();
+        }else{
+            JMSManager.getInstance().rechazoListoParaGuardar();
+        }
+    }
     /**
      * Coge los bytes recibidos con la nueva BBDD y la convierte en su base de datos y se conecta a ella
      * @param bytes
@@ -287,6 +310,9 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
                         break;
                     case CorrectId:
                         idCorrecto(data.toArray());
+                        break;
+                    case SolicitaCambioBBDD:
+                        respuestaACambio();
                         break;
                     case ReadyToStore:
                         comprobarSiEstanPreparados(data.toArray());
