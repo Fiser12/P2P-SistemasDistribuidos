@@ -118,7 +118,7 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
         boolean masterEncontrado = false;
         for (Map.Entry<String, TrackerKeepAlive> entry : trackersActivos.entrySet())
         {
-            if(entry.getValue().getId()!=TrackerService.getInstance().getTracker().getId()) {
+            if(!Objects.equals(entry.getValue().getId(), TrackerService.getInstance().getTracker().getId())) {
                 if (entry.getValue().getId().compareTo(TrackerService.getInstance().getTracker().getId()) <= -1) {
                     TrackerService.getInstance().getTracker().setMaster(false);
                     masterEncontrado = true;

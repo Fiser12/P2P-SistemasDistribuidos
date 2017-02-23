@@ -6,9 +6,7 @@ import Tracker.Util.HibernateUtil;
 import Tracker.VO.TrackerKeepAlive;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,9 +15,6 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Created by Fiser on 8/12/16.
- */
 public class TrackerMain extends JFrame implements Observer {
     private JTextField ipTextField;
     private IntegerField portTextField;
@@ -34,19 +29,19 @@ public class TrackerMain extends JFrame implements Observer {
     private JPanel smarmsPanel;
     private JPanel trackersPanel;
     private String[] column_names_trackers= {"Id","Es Master","Ultima update", "Estado"};
-    DefaultTableModel table_model_trackers=new DefaultTableModel(column_names_trackers,10);
-    String column_names_smarms[]= {"Id","Tamaño en bytes","Pares conectados"};
-    DefaultTableModel table_model_smarms=new DefaultTableModel(column_names_smarms,0);
+    private DefaultTableModel table_model_trackers=new DefaultTableModel(column_names_trackers,10);
+    private String column_names_smarms[]= {"Id","Tamaño en bytes","Pares conectados"};
+    private DefaultTableModel table_model_smarms=new DefaultTableModel(column_names_smarms,10);
 
     public TrackerMain() {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         pack();
         setSize(700, 500);
         setMinimumSize(new Dimension(700, 400));
 
         trackersPanel.add(tableTrackers.getTableHeader(), BorderLayout.NORTH);
         trackersPanel.add(tableTrackers, BorderLayout.CENTER);
-        tableSmarms=new JTable(table_model_smarms);
+        tableSmarms = new JTable(table_model_smarms);
         tableTrackers.setDefaultRenderer(Object.class, new MyCellRenderer());
 
         smarmsPanel.add(tableSmarms.getTableHeader(), BorderLayout.NORTH);
@@ -78,13 +73,13 @@ public class TrackerMain extends JFrame implements Observer {
     }
 
     public synchronized void actualizarInterfaz(ConcurrentHashMap<String, TrackerKeepAlive> valores){
-        DefaultTableModel defaultTable=new DefaultTableModel(column_names_trackers, 0);
+        table_model_trackers=new DefaultTableModel(column_names_trackers, 0);
         for(Map.Entry<String, TrackerKeepAlive> activeTracker : valores.entrySet()) {
             String[] temp = {activeTracker.getValue().getId(), (activeTracker.getValue().isMaster())?"Si":"No", activeTracker.getValue().getLastKeepAlive().toString(), activeTracker.getValue().getConfirmacionActualizacion().toString() };
-            defaultTable.addRow(temp);
+            table_model_trackers.addRow(temp);
         }
-        tableTrackers.setModel(defaultTable);
-        defaultTable.fireTableDataChanged();
+        tableTrackers.setModel(table_model_trackers);
+        table_model_trackers.fireTableDataChanged();
     }
     @Override
     public void update(Observable o, Object arg) {
@@ -94,7 +89,6 @@ public class TrackerMain extends JFrame implements Observer {
 
         public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, java.lang.Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             final java.awt.Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
             try {
                 Object val = table.getValueAt(row, 0);
                 String sval = val.toString();
@@ -105,7 +99,7 @@ public class TrackerMain extends JFrame implements Observer {
                     cellComponent.setBackground(Color.white);
                     cellComponent.setForeground(Color.black);
                 }
-            }catch(Exception e){
+            }catch(Exception ignored){
             }
             return cellComponent;
         }
