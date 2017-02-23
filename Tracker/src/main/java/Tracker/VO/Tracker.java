@@ -2,18 +2,18 @@ package Tracker.VO;
 
 public class Tracker {
     private String id;
-    private String ipAddress;
+    private String ip;
     private int port;
-    private int portForPeers;
+    private int portPeers;
     private boolean master;
 
     public Tracker() {
     }
-    public Tracker(String id, String ipAddress, int port, int portForPeers) {
+    public Tracker(String id, String ip, int port, int portPeers) {
         this.id = id;
-        this.ipAddress = ipAddress;
+        this.ip = ip;
         this.port = port;
-        this.portForPeers = portForPeers;
+        this.portPeers = portPeers;
     }
     public Tracker(String id) {
         this.id = id;
@@ -24,14 +24,14 @@ public class Tracker {
     public void setId(String id) {
         this.id = id;
     }
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
+    public void setIpAddress(String ip) {
+        this.ip = ip;
     }
     public void setPort(int port) {
         this.port = port;
     }
     public void setPortForPeers(int portForPeers) {
-        this.portForPeers = portForPeers;
+        this.portPeers = portForPeers;
     }
     public boolean isMaster() {
         return master;
@@ -39,5 +39,12 @@ public class Tracker {
     public void setMaster(boolean master) {
         this.master = master;
     }
+    public int getPortPeers() {
+        return portPeers;
+    }
+    public String getIp() {
+        return ip;
+    }
+
 }
 

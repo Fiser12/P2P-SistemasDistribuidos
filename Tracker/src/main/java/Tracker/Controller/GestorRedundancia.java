@@ -18,9 +18,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Created by Fiser on 13/11/16.
- */
 public class GestorRedundancia extends Observable implements Runnable, MessageListener {
     public boolean escuchandoPaquetes = true;
     public boolean pararHiloKeepAlive = false;
@@ -28,10 +25,9 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
     public boolean pararComprobacionKeepAlive = false;
     public boolean eligiendoMaster = false;
     private ConcurrentHashMap<String, TrackerKeepAlive> trackersActivos;
-
     public GestorRedundancia()
     {
-        trackersActivos = new ConcurrentHashMap<String, TrackerKeepAlive>();
+        trackersActivos = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -58,7 +54,7 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
      */
     private void hiloDeEnvioDeKeepAlive()
     {
-        Thread threadSendKeepAliveMessages = new Thread() {
+        Thread hiloDeEnvioDeKeepAlive = new Thread() {
             public void run() {
                 while (!pararHiloKeepAlive) {
                     try {
@@ -70,14 +66,14 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
                 }
             }
         };
-        threadSendKeepAliveMessages.start();
+        hiloDeEnvioDeKeepAlive.start();
     }
     /**
      * Es el método que se va a encargar de comprobar todos los trackers de la red
      */
     private void hiloDeComprobarTrackersActivos()
     {
-        Thread threadCheckKeepAliveMessages = new Thread() {
+        Thread hiloDeComprobarTrackersActivos = new Thread() {
             public void run() {
                 try {
                     Thread.sleep(8000);
@@ -97,7 +93,7 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
                 }
             }
         };
-        threadCheckKeepAliveMessages.start();
+        hiloDeComprobarTrackersActivos.start();
     }
 
     /**
@@ -153,12 +149,12 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
         file.delete();
         String newFileName = "tracker_" + TrackerService.getInstance().getTracker().getId() + ".db";
         File fileDest = new File(newFileName);
-        FileOutputStream fileOutputStream = null;
+        FileOutputStream fileOutputStream;
         try {
             long length = fileDest.length();
             fileOutputStream = new FileOutputStream(fileDest);
             if (length > 0) {
-                fileOutputStream.write((new String()).getBytes());
+                fileOutputStream.write(("").getBytes());
             }
             fileOutputStream.write(bytes);
             fileOutputStream.flush();
@@ -186,7 +182,7 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
         return TypeMessage.valueOf(typeMessage);
     }
 
-    public void keepAlive(Object[] datos){
+    private void keepAlive(Object[] datos){
         boolean master = (Boolean) datos[0];
         String id = (String) datos[1];
         if (!esperandoID) {
@@ -216,14 +212,13 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
         }
     }
 
-    public void idCorrecto(Object[] datos){
-        if (((String) datos[0]).equals(TrackerService.getInstance().getTracker().getId()) && esperandoID) {
+    private void idCorrecto(Object[] datos){
+        if (datos[0].equals(TrackerService.getInstance().getTracker().getId()) && esperandoID) {
             esperandoID = false;
         }
     }
     /**
      * Este método se encarga de comprobar cada vez que recibe un ready de comprobar si ya están todos preparados y cuando son suficientes, confirma la update de la BBDD
-     * @param datos
      */
     private void comprobarSiEstanPreparados(Object[] datos)
     {
@@ -250,12 +245,12 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
             //Miramos que todos hayan respondido si o no
             if (confirmados+rechazados == trackersActivos.size()-1) {
                 if(confirmados>rechazados) {
-                    /**
+                    /*
                      * TODO Guardar los nuevos datos en la BBDD
                      */
                     JMSManager.getInstance().confirmacionActualizarBBDD();
                 }else{
-                    //GESTIONAR NEGATIVA AL PEER
+                    //TODO GESTIONAR NEGATIVA AL PEER
                 }
                 for (TrackerKeepAlive trackerTemp : trackersActivos.values()) {
                     trackerTemp.setConfirmacionActualizacion(Estado.Esperando);
@@ -276,7 +271,6 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
     }
     /**
      * Coge los bytes recibidos con la nueva BBDD y la convierte en su base de datos y se conecta a ella
-     * @param bytes
      */
     private void actualizarBBDD(byte[] bytes){
         convertirByteEnFichero(bytes);
@@ -292,11 +286,11 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
             TypeMessage tipoMensaje = tipoMensaje(mapMensaje);
             try {
                 Enumeration<String> mapKeys = (Enumeration<String>) mapMensaje.getMapNames();
-                String key = null;
-                List<Object> data = new ArrayList<Object>();
+                String key;
+                List<Object> data = new ArrayList<>();
                 while (mapKeys.hasMoreElements()) {
                     key = mapKeys.nextElement();
-                    if (key != null & !key.equals("")) {
+                    if (key != null & !Objects.equals(key, "")) {
                         data.add(mapMensaje.getObject(key));
                     }
                 }

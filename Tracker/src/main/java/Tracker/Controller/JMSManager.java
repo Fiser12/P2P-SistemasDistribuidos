@@ -8,7 +8,6 @@ import javax.jms.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +26,8 @@ public class JMSManager {
 
 
     private JMSManager() {
-        topicPublishers = new ArrayList<TopicPublisher>();
-        topicSubscribers = new ArrayList<TopicSubscriber>();
+        topicPublishers = new ArrayList<>();
+        topicSubscribers = new ArrayList<>();
         try {
             context = new InitialContext();
             topicConnectionFactory = (TopicConnectionFactory) context.lookup("TopicConnectionFactory");
@@ -232,7 +231,7 @@ public class JMSManager {
                 topicSession.close();
             if (topicConnection != null)
                 topicConnection.close();
-        } catch (JMSException e) {
+        } catch (JMSException ignored) {
 
         }
     }

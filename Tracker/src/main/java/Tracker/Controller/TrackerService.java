@@ -14,8 +14,10 @@ public class TrackerService {
     private Tracker tracker;
     private GestorRedundancia gestorRedundancia;
     private Thread hiloGestorRedundancia;
+    private UDPManager udpServer;
     private TrackerService(){
         gestorRedundancia = new GestorRedundancia();
+        udpServer = UDPManager.getInstance();
         ventana = new TrackerMain();
         gestorRedundancia.addObserver(ventana);
         tracker = new Tracker();
@@ -47,6 +49,7 @@ public class TrackerService {
         tracker.setPortForPeers(portForPeers);
         tracker.setIpAddress(ipAddress);
         tracker.setMaster(false);
+        udpServer.start();
         hiloGestorRedundancia = new Thread(gestorRedundancia);
         hiloGestorRedundancia.start();
     }
