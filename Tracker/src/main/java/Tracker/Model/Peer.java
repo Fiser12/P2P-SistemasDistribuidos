@@ -18,7 +18,7 @@ import javax.persistence.Table;
 @Table(name = "peer")
 public class Peer implements java.io.Serializable, Observable {
 
-	private Integer idPeer;
+	private Long idPeer;
 	private String ip;
 	private Integer port;
 	private Set<PeerSmarms> peerSmarmses = new HashSet<PeerSmarms>(0);
@@ -41,11 +41,11 @@ public class Peer implements java.io.Serializable, Observable {
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "PEER_ID", nullable = false)
-	public Integer getIdPeer() {
+	public Long getIdPeer() {
 		return this.idPeer;
 	}
 
-	public void setIdPeer(Integer idPeer) {
+	public void setIdPeer(Long idPeer) {
 		this.idPeer = idPeer;
 	}
 

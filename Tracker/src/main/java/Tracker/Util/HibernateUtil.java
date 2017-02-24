@@ -1,6 +1,8 @@
 package Tracker.Util;
 
 import Tracker.Controller.TrackerService;
+import Tracker.Model.Peer;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
@@ -8,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 
 public class HibernateUtil {
 
@@ -37,6 +40,17 @@ public class HibernateUtil {
         cfg.setProperty("hibernate.connection.url", url);
         sessionFactory = cfg.buildSessionFactory();
         return sessionFactory;
+    }
+    public static void saveData(Object obj){
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+        session.save(obj);
+        session.flush();
+    }
+    public static List list(Class c){
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+        return session.createCriteria(c).list();
     }
     public static void removeDatabase() {
         File file = new File("tracker_" + TrackerService.getInstance().getTracker().getId() + ".db");

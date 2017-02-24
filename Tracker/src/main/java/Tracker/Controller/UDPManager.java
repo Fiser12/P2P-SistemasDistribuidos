@@ -1,5 +1,11 @@
 package Tracker.Controller;
 
+import Tracker.Controller.Parser.Announce_Request;
+import Tracker.Controller.Parser.Connection_Request;
+import Tracker.Controller.Parser.Scrape_Request;
+import Tracker.Controller.Parser.UDP_Message;
+import Tracker.Util.bittorrent.tracker.protocol.udp.BitTorrentUDPRequestMessage;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -13,6 +19,7 @@ public class UDPManager {
     private MulticastSocket multicastSocket;
     private boolean udpServerAlive;
     private static UDPManager instance = null;
+    private InetAddress inetAddress;
 
     private UDPManager() {
         this.udpServerAlive = true;
@@ -21,6 +28,7 @@ public class UDPManager {
         new Thread() {
             public void run() {
                 try {
+                    crearSocket();
                     launchServer();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -35,12 +43,13 @@ public class UDPManager {
         return instance;
     }
 
-
-    private void launchServer() throws IOException {
-        InetAddress inetAddress;
+    private void crearSocket() throws IOException{
         inetAddress = InetAddress.getByName(TrackerService.getInstance().getTracker().getIp());
         multicastSocket = new MulticastSocket(TrackerService.getInstance().getTracker().getPortPeers());
         multicastSocket.joinGroup(inetAddress);
+
+    }
+    private void launchServer() throws IOException {
         byte[] receiveData = new byte[1024];
 
         while (udpServerAlive) {
@@ -62,41 +71,44 @@ public class UDPManager {
         }
     }
 
-    private byte[] parseData(InetAddress clientAddress, int clientPort, byte[] receivedBytes) {
+    private byte[] parseData(InetAddress clientAddress, int clientPort, byte[] data) {
         try {
-            ByteBuffer buffer = this.deserialize(receivedBytes);
-            /*
-            if (buffer != null) {
-
-                 int value = buffer.getInt(8);
-                BitTorrentUDPRequestMessage parsedRequestMessage = PeerRequestParser.parse(value, receivedBytes);
-                if (parsedRequestMessage != null) {
-                    //validate received message
-                    boolean valid = PeerRequestParser.validate(this, value, parsedRequestMessage);
-                    if (valid) {
-                        PeerRequestParser.triggerOnReceiveEvent(this, value, clientAddress, clientPort, parsedRequestMessage);
-                        //valid message. response
-                        return PeerRequestParser.getResponse(this, value, parsedRequestMessage);
-                    } else {
-                        this.trackerInstance.addLogLine("Error: Invalid message detected of type " + parsedRequestMessage.getClass().getSimpleName());
-                        return PeerRequestParser.getError(value, false, parsedRequestMessage, "invalid message");
+            ByteBuffer byteBuffer = ByteBuffer.wrap(data);
+            byteBuffer.order(ByteOrder.BIG_ENDIAN);
+            if (byteBuffer != null) {
+                int value = byteBuffer.getInt(8);
+                UDP_Message parser = prepararParser(value);
+                if(parser!=null){
+                    BitTorrentUDPRequestMessage parsed = parser.parse(data);
+                    if(parsed!=null){
+                        boolean ok = parser.validate(parsed, clientAddress);
+                        if (ok) {
+                            return parser.getResponse(parsed, clientAddress, clientPort);
+                        } else {
+                            return parser.getError(parsed);
+                        }
                     }
-                } else {
-                    this.trackerInstance.addLogLine("Error: NULL message detected ");
-                    return PeerRequestParser.getError(value, false, null, "Malformed message");
                 }
-
             }
-            */
         } catch (Exception e) {
             System.err.println(e.getLocalizedMessage());
         }
         return null;
     }
-
-    private ByteBuffer deserialize(byte[] data) throws IOException, ClassNotFoundException {
-        ByteBuffer buffer = ByteBuffer.wrap(data);
-        buffer.order(ByteOrder.BIG_ENDIAN);
-        return buffer;
+    private UDP_Message prepararParser(int value){
+        UDP_Message parser = null;
+        switch(value)
+        {
+            case 0:
+                parser = Connection_Request.getInstance();
+                break;
+            case 1:
+                parser = Announce_Request.getInstance();
+                break;
+            case 2:
+                parser = Scrape_Request.getInstance();
+                break;
+        }
+        return parser;
     }
 }
