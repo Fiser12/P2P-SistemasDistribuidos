@@ -133,11 +133,11 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
         }
         if(!masterEncontrado) {
             TrackerService.getInstance().getTracker().setMaster(true);
-            crearNuevaBBDD();
+            cargarBBDD();
         }
         eligiendoMaster = false;
     }
-    private void crearNuevaBBDD()
+    private void cargarBBDD()
     {
         Session session = HibernateUtil.changeDatabase("jdbc:sqlite:tracker_"+TrackerService.getInstance().getTracker().getId()+".db").openSession();
         session.beginTransaction();
@@ -274,9 +274,6 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
      */
     private void actualizarBBDD(byte[] bytes){
         convertirByteEnFichero(bytes);
-        Session session = HibernateUtil.changeDatabase("jdbc:sqlite:tracker_"+TrackerService.getInstance().getTracker().getId()+".db").openSession();
-        session.beginTransaction();
-        session.getTransaction().commit();
     }
     @Override
     public void onMessage(Message mensaje)
