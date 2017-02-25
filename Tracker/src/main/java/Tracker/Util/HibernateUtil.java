@@ -1,5 +1,6 @@
 package Tracker.Util;
 
+import Tracker.Controller.JMSManager;
 import Tracker.Controller.TrackerService;
 import Tracker.Model.Peer;
 import Tracker.Model.Smarms;
@@ -17,14 +18,14 @@ import java.util.List;
 public class HibernateUtil {
 
     private static SessionFactory sessionFactory = buildSessionFactory();
+    private static Session sessionElement;
+    private static Query queryElement1;
+    private static Query queryElement2;
 
     private static SessionFactory buildSessionFactory() {
         try {
-            // Create the SessionFactory from hibernate.cfg.xml
             return new Configuration().configure().buildSessionFactory();
         } catch (Throwable ex) {
-            // Make sure you log the exception, as it might be swallowed
-            System.err.println("Initial SessionFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);
         }
     }
@@ -84,7 +85,8 @@ public class HibernateUtil {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
         session.save(obj);
-        session.flush();
+        sessionElement = session;
+        JMSManager.getInstance().solicitarCambioBBDD();
     }
     public static List list(Class c){
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
@@ -96,12 +98,23 @@ public class HibernateUtil {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
         String hql = String.format("delete from Peer");
-        Query query = session.createQuery(hql);
-        query.executeUpdate();
+        queryElement1 = session.createQuery(hql);
         hql = String.format("delete from PeerSmarms");
-        query = session.createQuery(hql);
-        query.executeUpdate();
-
-
+        queryElement2 = session.createQuery(hql);
+        JMSManager.getInstance().solicitarCambioBBDD();
+    }
+    public static void updateDatabase(){
+        if(queryElement1!=null){
+            queryElement1.executeUpdate();
+            queryElement1 = null;
+        }
+        if(queryElement2!=null){
+            queryElement2.executeUpdate();
+            queryElement2 = null;
+        }
+        if(sessionElement!=null) {
+            sessionElement.flush();
+            sessionElement = null;
+        }
     }
 }

@@ -227,7 +227,6 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
             String id = (String) datos[1];
             TrackerKeepAlive tracker = trackersActivos.get(id);
 
-            //Establecemos el estado
             if(listo)
                 tracker.setConfirmacionActualizacion(Estado.Confirmado);
             else
@@ -242,9 +241,9 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
                     rechazados++;
                 }
             }
-            //Miramos que todos hayan respondido si o no
-            if (confirmados+rechazados == trackersActivos.size()-1) {
+            if (confirmados+rechazados == trackersActivos.size()) {
                 if(confirmados>rechazados) {
+                    HibernateUtil.updateDatabase();
                     JMSManager.getInstance().confirmacionActualizarBBDD();
                 }
                 for (TrackerKeepAlive trackerTemp : trackersActivos.values()) {
@@ -252,10 +251,6 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
                 }
             }
         }
-    }
-    public void cambioEnBBDD()
-    {
-        JMSManager.getInstance().solicitarCambioBBDD();
     }
     private void respuestaACambio(){
         if(escuchandoPaquetes&&!eligiendoMaster&&!esperandoID){
@@ -304,7 +299,8 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
                         comprobarSiEstanPreparados(data.toArray());
                         break;
                     case ConfirmToStore:
-                        actualizarBBDD((byte[])data.toArray()[1]);
+                        if(!TrackerService.getInstance().getTracker().isMaster())
+                            actualizarBBDD((byte[])data.toArray()[0]);
                         break;
                 }
             } catch (JMSException e) {

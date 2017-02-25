@@ -61,6 +61,7 @@ public class JMSManager {
             lista.add(UtilController.JNDIConfirmToStore);
             lista.add(UtilController.JNDICorrectId);
             lista.add(UtilController.JNDISendBBDD);
+            lista.add(UtilController.JNDISoliciteChangeBBDD);
 
             if (instance != null) {
                 for(String add: lista) {

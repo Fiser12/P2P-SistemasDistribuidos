@@ -21,7 +21,7 @@ public class UDPManager {
     private boolean udpServerAlive;
     private static UDPManager instance = null;
     private InetAddress inetAddress;
-    private static final long TIEMPO_SESION = 2 * 60 * 1000;
+    private static final long TIEMPO_SESION = 30 * 1000;
 
     private UDPManager() {
         this.udpServerAlive = true;
@@ -65,8 +65,10 @@ public class UDPManager {
 
             public void run() {
                 try {
-                    Thread.sleep(TIEMPO_SESION);
-                    HibernateUtil.eliminarSesiones();
+                    while(udpServerAlive) {
+                        Thread.sleep(TIEMPO_SESION);
+                        HibernateUtil.eliminarSesiones();
+                    }
                 } catch (InterruptedException e1) {
                     System.err.println("# Interrupted Exception: " + e1.getMessage());
                 }

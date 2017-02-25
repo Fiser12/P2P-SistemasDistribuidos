@@ -6,18 +6,14 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c7d15d46-a2e8-4a9e-b3fe-93af5b39c87e" name="Default" comment="">
+    <list default="true" id="c7d15d46-a2e8-4a9e-b3fe-93af5b39c87e" name="Default" comment="Creado el announce entero y creo que funciona todo de forma lógica, creo que lo he conseguido encajar">
       <change type="DELETED" beforePath="$PROJECT_DIR$/trackerdb.db" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/GestorRedundancia.java" afterPath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/GestorRedundancia.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/Parser/Announce_Request.java" afterPath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/Parser/Announce_Request.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/Parser/Connection_Request.java" afterPath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/Parser/Connection_Request.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/Parser/Scrape_Request.java" afterPath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/Parser/Scrape_Request.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/JMSManager.java" afterPath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/JMSManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/UDPManager.java" afterPath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/UDPManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Model/Peer.java" afterPath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Model/Peer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Model/PeerSmarms.java" afterPath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Model/PeerSmarms.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Model/Smarms.java" afterPath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Model/Smarms.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/HibernateUtil.java" afterPath="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/HibernateUtil.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tracker/src/main/resources/trackerdb.db" afterPath="$PROJECT_DIR$/Tracker/src/main/resources/trackerdb.db" />
     </list>
     <ignored path="P2P-SistemasDistribuidos.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -54,51 +50,54 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="TrackerService.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/TrackerService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="105">
+              <caret line="10" column="13" lean-forward="false" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="HibernateUtil.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/HibernateUtil.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1256">
+              <caret line="120" column="5" lean-forward="true" selection-start-line="120" selection-start-column="5" selection-end-line="120" selection-end-column="5" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="GestorRedundancia.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/GestorRedundancia.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="615">
-              <caret line="61" column="0" lean-forward="false" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
+            <state relative-caret-position="-426">
+              <caret line="148" column="0" lean-forward="false" selection-start-line="148" selection-start-column="0" selection-end-line="150" selection-end-column="0" />
+              <folding>
+                <element signature="e#10391#10392#0" expanded="true" />
+                <element signature="e#10436#10437#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SQLiteDialect.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/SQLiteDialect.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="19" column="13" lean-forward="false" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Peer.hbm.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Tracker/src/main/resources/Tracker/Model/Peer.hbm.xml">
+      <file leaf-file-name="UtilController.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/UtilController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="22" column="20" lean-forward="true" selection-start-line="22" selection-start-column="20" selection-end-line="22" selection-end-column="20" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="JMSManager.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/JMSManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="333">
-              <caret line="82" column="0" lean-forward="false" selection-start-line="82" selection-start-column="0" selection-end-line="82" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Connection_Request.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/Parser/Connection_Request.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="495">
-              <caret line="46" column="30" lean-forward="false" selection-start-line="46" selection-start-column="26" selection-end-line="46" selection-end-column="30" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="UDP_Message.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/Parser/UDP_Message.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="9" column="22" lean-forward="false" selection-start-line="9" selection-start-column="11" selection-end-line="9" selection-end-column="22" />
+            <state relative-caret-position="165">
+              <caret line="11" column="80" lean-forward="false" selection-start-line="11" selection-start-column="52" selection-end-line="11" selection-end-column="80" />
               <folding />
             </state>
           </provider>
@@ -107,45 +106,28 @@
       <file leaf-file-name="UDPManager.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/UDPManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="32" column="44" lean-forward="false" selection-start-line="32" selection-start-column="44" selection-end-line="32" selection-end-column="44" />
-              <folding>
-                <element signature="e#911#1185#0" expanded="true" />
-                <element signature="e#1184#1185#0" expanded="true" />
-                <element signature="e#2194#2548#0" expanded="true" />
-                <element signature="e#2547#2548#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="HibernateUtil.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/HibernateUtil.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="851">
-              <caret line="102" column="29" lean-forward="false" selection-start-line="102" selection-start-column="29" selection-end-line="102" selection-end-column="29" />
+            <state relative-caret-position="329">
+              <caret line="53" column="32" lean-forward="true" selection-start-line="53" selection-start-column="32" selection-end-line="53" selection-end-column="32" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Announce_Request.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/Parser/Announce_Request.java">
+      <file leaf-file-name="JMSManager.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/JMSManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="795">
-              <caret line="55" column="33" lean-forward="true" selection-start-line="55" selection-start-column="33" selection-end-line="55" selection-end-column="33" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="419">
+              <caret line="208" column="41" lean-forward="false" selection-start-line="208" selection-start-column="37" selection-end-line="208" selection-end-column="41" />
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PeerSmarms.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Model/PeerSmarms.java">
+      <file leaf-file-name="jndi.properties" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Tracker/src/main/resources/jndi.properties">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="525">
-              <caret line="58" column="40" lean-forward="false" selection-start-line="58" selection-start-column="40" selection-end-line="58" selection-end-column="40" />
+            <state relative-caret-position="30">
+              <caret line="2" column="66" lean-forward="false" selection-start-line="2" selection-start-column="44" selection-end-line="2" selection-end-column="66" />
               <folding />
             </state>
           </provider>
@@ -165,9 +147,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>crearNuevaBBDD</find>
-      <find>calcularID</find>
-      <find>UUID</find>
       <find>mensaje</find>
       <find>queueReceiver</find>
       <find>queueSession</find>
@@ -195,6 +174,9 @@
       <find>getI</find>
       <find>getId</find>
       <find>bytes</find>
+      <find>solicit</find>
+      <find>file</find>
+      <find>system</find>
     </findStrings>
     <replaceStrings>
       <replace>Tracker.Util.bittorrent</replace>
@@ -214,7 +196,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/bittorrent/protocol/RequestMsg.java" />
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/bittorrent/protocol/UnChokeMsg.java" />
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/bittorrent/bencoding/test/BencoderTest.java" />
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/bittorrent/metainfo/handler/MetainfoHandler.java" />
@@ -248,7 +229,6 @@
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/TrackerService.java" />
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/main.java" />
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/VO/Tracker.java" />
-        <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/JMSManager.java" />
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/VO/PeerMessage.java" />
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/UDPParser.java" />
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/Parser/ParserFactory.java" />
@@ -256,14 +236,16 @@
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/Parser/UDPParser.java" />
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/Parser/UDP_Parser.java" />
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/Parser/UDP_Message.java" />
-        <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/GestorRedundancia.java" />
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/Parser/Connection_Request.java" />
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Model/Smarms.java" />
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Model/Peer.java" />
-        <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/HibernateUtil.java" />
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/Parser/Scrape_Request.java" />
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/Parser/Announce_Request.java" />
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Model/PeerSmarms.java" />
+        <option value="$PROJECT_DIR$/Tracker/src/main/resources/jndi.properties" />
+        <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/JMSManager.java" />
+        <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/HibernateUtil.java" />
+        <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/GestorRedundancia.java" />
         <option value="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/UDPManager.java" />
       </list>
     </option>
@@ -452,6 +434,40 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="Util" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="P2P-SistemasDistribuidos" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="P2P-SistemasDistribuidos" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Tracker" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Tracker" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="Model" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -548,22 +564,22 @@
     <property name="FullScreen" value="true" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util" />
-      <recent name="$PROJECT_DIR$/Tracker/src/main/resources" />
-    </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Tracker/src/main/resources" />
+      <recent name="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util" />
+      <recent name="$PROJECT_DIR$/out/artifacts/P2P_SistemasDistribuidos_jar" />
+      <recent name="$PROJECT_DIR$/Tracker/src/main/java/Tracker/View" />
+      <recent name="$PROJECT_DIR$/Tracker/target/classes/Tracker/View" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="Tracker.Controller.Parser" />
     </key>
-    <key name="CopyFile.RECENT_KEYS">
+    <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util" />
-      <recent name="$PROJECT_DIR$/out/artifacts/P2P_SistemasDistribuidos_jar" />
-      <recent name="$PROJECT_DIR$/Tracker/src/main/java/Tracker/View" />
       <recent name="$PROJECT_DIR$/Tracker/src/main/resources" />
-      <recent name="$PROJECT_DIR$/Tracker/target/classes/Tracker/View" />
     </key>
   </component>
   <component name="RunManager" selected="Application.main">
@@ -1014,7 +1030,7 @@
       <workItem from="1487883458524" duration="13389000" />
       <workItem from="1487940448089" duration="581000" />
       <workItem from="1487951944605" duration="2195000" />
-      <workItem from="1487990956520" duration="7462000" />
+      <workItem from="1487990956520" duration="10205000" />
     </task>
     <task id="LOCAL-00001" summary="Observer programado&#10;MVC organizado mejor">
       <created>1477043175427</created>
@@ -1065,11 +1081,18 @@
       <option name="project" value="LOCAL" />
       <updated>1487909350312</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Creado el announce entero y creo que funciona todo de forma lógica, creo que lo he conseguido encajar">
+      <created>1488000633998</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1488000633999</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="206296000" />
+    <option name="totallyTimeSpent" value="209039000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1095,9 +1118,9 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24407753" sideWeight="0.4890625" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329927" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Persistence" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13867188" sideWeight="0.31434" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Persistence" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13867188" sideWeight="0.31434" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13867188" sideWeight="0.68566" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21289062" sideWeight="0.68566" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.471875" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1139,7 +1162,8 @@
     <MESSAGE value="UDPManager agregado y funcional" />
     <MESSAGE value="Código más ordenado" />
     <MESSAGE value="Optimizada carga de la BBDD" />
-    <option name="LAST_COMMIT_MESSAGE" value="Optimizada carga de la BBDD" />
+    <MESSAGE value="Creado el announce entero y creo que funciona todo de forma lógica, creo que lo he conseguido encajar" />
+    <option name="LAST_COMMIT_MESSAGE" value="Creado el announce entero y creo que funciona todo de forma lógica, creo que lo he conseguido encajar" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1153,27 +1177,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/bittorrent/peer/protocol/BitfieldMsg.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="23" column="13" lean-forward="false" selection-start-line="23" selection-start-column="13" selection-end-line="23" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/bittorrent/peer/protocol/test/PeerMessagesTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-143">
-          <caret line="2" column="7" lean-forward="true" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/bittorrent/peer/protocol/CancelMsg.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="16" column="13" lean-forward="false" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/bittorrent/peer/protocol/ChokeMsg.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
@@ -1331,21 +1334,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/Parser/UDPParser.java" />
-    <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/View/TrackerMain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="24" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/bittorrent/tracker/protocol/udp/Error.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1371,30 +1360,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/TrackerService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="10" column="13" lean-forward="false" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#870#871#0" expanded="false" />
-            <element signature="e#910#911#0" expanded="false" />
-            <element signature="e#944#945#0" expanded="false" />
-            <element signature="e#974#975#0" expanded="false" />
-            <element signature="e#1021#1022#0" expanded="false" />
-            <element signature="e#1059#1060#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/UtilController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="13" lean-forward="false" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/bittorrent/tracker/protocol/udp/AnnounceResponse.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-9">
@@ -1403,14 +1368,6 @@
             <element signature="e#3415#3416#0" expanded="false" />
             <element signature="e#3449#3450#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/SQLiteDialect.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="19" column="13" lean-forward="false" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1453,14 +1410,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/JMSManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="333">
-          <caret line="82" column="0" lean-forward="false" selection-start-line="82" selection-start-column="0" selection-end-line="82" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Tracker/src/main/resources/hibernate.cfg.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1474,10 +1423,10 @@
         <state relative-caret-position="195">
           <caret line="25" column="16" lean-forward="false" selection-start-line="25" selection-start-column="16" selection-end-line="25" selection-end-column="16" />
           <folding>
-            <element signature="e#702#703#0" expanded="true" />
-            <element signature="e#728#729#0" expanded="true" />
-            <element signature="e#779#780#0" expanded="true" />
-            <element signature="e#818#819#0" expanded="true" />
+            <element signature="e#454#455#0" expanded="true" />
+            <element signature="e#480#481#0" expanded="true" />
+            <element signature="e#531#532#0" expanded="true" />
+            <element signature="e#570#571#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1485,7 +1434,7 @@
     <entry file="file://$PROJECT_DIR$/Tracker/src/main/resources/Tracker/Model/Peer.hbm.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
-          <caret line="22" column="20" lean-forward="true" selection-start-line="22" selection-start-column="20" selection-end-line="22" selection-end-column="20" />
+          <caret line="22" column="20" lean-forward="false" selection-start-line="22" selection-start-column="20" selection-end-line="22" selection-end-column="20" />
           <folding />
         </state>
       </provider>
@@ -1494,14 +1443,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
           <caret line="9" column="22" lean-forward="false" selection-start-line="9" selection-start-column="11" selection-end-line="9" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/HibernateUtil.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="851">
-          <caret line="102" column="29" lean-forward="false" selection-start-line="102" selection-start-column="29" selection-end-line="102" selection-end-column="29" />
           <folding />
         </state>
       </provider>
@@ -1519,7 +1460,33 @@
     <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Model/PeerSmarms.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="525">
-          <caret line="58" column="40" lean-forward="false" selection-start-line="58" selection-start-column="40" selection-end-line="58" selection-end-column="40" />
+          <caret line="52" column="40" lean-forward="false" selection-start-line="52" selection-start-column="40" selection-end-line="52" selection-end-column="40" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tracker/src/main/resources/trackerdb.db">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/View/TrackerMain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-210">
+          <caret line="24" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1527,7 +1494,7 @@
     <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/Parser/Announce_Request.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="795">
-          <caret line="55" column="33" lean-forward="true" selection-start-line="55" selection-start-column="33" selection-end-line="55" selection-end-column="33" />
+          <caret line="55" column="33" lean-forward="false" selection-start-line="55" selection-start-column="33" selection-end-line="55" selection-end-column="33" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1542,24 +1509,78 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/VO/TypeMessage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" column="17" lean-forward="true" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tracker/src/main/resources/jndi.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="66" lean-forward="false" selection-start-line="2" selection-start-column="44" selection-end-line="2" selection-end-column="66" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/TrackerService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="10" column="13" lean-forward="false" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/SQLiteDialect.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="19" column="13" lean-forward="false" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/UtilController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="80" lean-forward="false" selection-start-line="11" selection-start-column="52" selection-end-line="11" selection-end-column="80" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/JMSManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="419">
+          <caret line="208" column="41" lean-forward="false" selection-start-line="208" selection-start-column="37" selection-end-line="208" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Util/HibernateUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1256">
+          <caret line="120" column="5" lean-forward="true" selection-start-line="120" selection-start-column="5" selection-end-line="120" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/GestorRedundancia.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="615">
-          <caret line="61" column="0" lean-forward="false" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="-426">
+          <caret line="148" column="0" lean-forward="false" selection-start-line="148" selection-start-column="0" selection-end-line="150" selection-end-column="0" />
+          <folding>
+            <element signature="e#10391#10392#0" expanded="true" />
+            <element signature="e#10436#10437#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Tracker/src/main/java/Tracker/Controller/UDPManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="32" column="44" lean-forward="false" selection-start-line="32" selection-start-column="44" selection-end-line="32" selection-end-column="44" />
-          <folding>
-            <element signature="e#911#1185#0" expanded="true" />
-            <element signature="e#1184#1185#0" expanded="true" />
-            <element signature="e#2194#2548#0" expanded="true" />
-            <element signature="e#2547#2548#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="329">
+          <caret line="53" column="32" lean-forward="true" selection-start-line="53" selection-start-column="32" selection-end-line="53" selection-end-column="32" />
+          <folding />
         </state>
       </provider>
     </entry>
