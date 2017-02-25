@@ -2,36 +2,32 @@ package Tracker.Model;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 @Entity
 @Table(name = "smarms")
 public class Smarms implements java.io.Serializable, Observable {
 
 	private String smarmsId;
-	private String name;
+	private String hexInfoHash;
 	private Integer tamanoEnBytes;
 	private Set<PeerSmarms> peerSmarmses = new HashSet<PeerSmarms>(0);
 
 	public Smarms() {
 	}
 
-	public Smarms(String name, Integer tamanoEnBytes) {
-		this.name = name;
+	public Smarms(String hexInfoHash, Integer tamanoEnBytes) {
+		this.hexInfoHash = hexInfoHash;
 		this.tamanoEnBytes = tamanoEnBytes;
 	}
 
-	public Smarms(String name, Integer tamanoEnBytes, Set<PeerSmarms> peerSmarmses) {
-		this.name = name;
+	public Smarms(String hexInfoHash, Integer tamanoEnBytes, Set<PeerSmarms> peerSmarmses) {
+		this.hexInfoHash = hexInfoHash;
 		this.tamanoEnBytes = tamanoEnBytes;
 		this.peerSmarmses = peerSmarmses;
 	}
@@ -47,13 +43,13 @@ public class Smarms implements java.io.Serializable, Observable {
 		this.smarmsId = smarmsId;
 	}
 
-	@Column(name = "NAME", nullable = false, length = 10)
-	public String getName() {
-		return this.name;
+	@Column(name = "hexInfoHash", nullable = false, length = 10)
+	public String getHexInfoHash() {
+		return this.hexInfoHash;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setHexInfoHash(String hexInfoHash) {
+		this.hexInfoHash = hexInfoHash;
 	}
 
 	@Column(name = "SMARMS_TAMANO", nullable = false)

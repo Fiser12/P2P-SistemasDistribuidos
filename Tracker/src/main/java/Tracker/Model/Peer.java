@@ -2,17 +2,12 @@ package Tracker.Model;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 @Entity
 @Table(name = "peer")
@@ -21,22 +16,21 @@ public class Peer implements java.io.Serializable, Observable {
 	private Long idPeer;
 	private String ip;
 	private Integer port;
+	private Long connectionId;
+
+	public Long getConnectionId() {
+		return connectionId;
+	}
+
+	public void setConnectionId(Long connectionId) {
+		this.connectionId = connectionId;
+	}
+
 	private Set<PeerSmarms> peerSmarmses = new HashSet<PeerSmarms>(0);
 
 	public Peer() {
 	}
 
-	public Peer(String ip, Integer port) {
-		this.ip = ip;
-		this.port = port;
-	}
-
-	public Peer(String ip, Integer port,
-				Set<PeerSmarms> peerSmarmses) {
-		this.ip = ip;
-		this.port = port;
-		this.peerSmarmses = peerSmarmses;
-	}
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)

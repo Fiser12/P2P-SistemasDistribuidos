@@ -2,6 +2,8 @@ package Tracker.Util;
 
 import Tracker.Controller.TrackerService;
 import Tracker.Model.Peer;
+import Tracker.Model.Smarms;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -41,17 +43,6 @@ public class HibernateUtil {
         sessionFactory = cfg.buildSessionFactory();
         return sessionFactory;
     }
-    public static void saveData(Object obj){
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-        session.save(obj);
-        session.flush();
-    }
-    public static List list(Class c){
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-        return session.createCriteria(c).list();
-    }
     public static void removeDatabase() {
         File file = new File("tracker_" + TrackerService.getInstance().getTracker().getId() + ".db");
         file.delete();
@@ -75,4 +66,42 @@ public class HibernateUtil {
         return bytes;
     }
 
+    public static Object getData(String hash, Class clase)
+    {
+        for(Object temp: list(clase)){
+            if(clase==Smarms.class){
+                if(((Smarms)temp).getSmarmsId().equals(hash))
+                    return temp;
+            }else if(clase==Peer.class){
+                long id = Long.parseLong(hash);
+                if(((Peer)temp).getConnectionId()==id)
+                    return temp;
+            }
+        }
+        return null;
+    }
+    public static void saveData(Object obj){
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+        session.save(obj);
+        session.flush();
+    }
+    public static List list(Class c){
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+        return session.createCriteria(c).list();
+    }
+
+    public static void eliminarSesiones() {
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+        String hql = String.format("delete from Peer");
+        Query query = session.createQuery(hql);
+        query.executeUpdate();
+        hql = String.format("delete from PeerSmarms");
+        query = session.createQuery(hql);
+        query.executeUpdate();
+
+
+    }
 }

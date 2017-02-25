@@ -245,12 +245,7 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
             //Miramos que todos hayan respondido si o no
             if (confirmados+rechazados == trackersActivos.size()-1) {
                 if(confirmados>rechazados) {
-                    /*
-                     * TODO Guardar los nuevos datos en la BBDD
-                     */
                     JMSManager.getInstance().confirmacionActualizarBBDD();
-                }else{
-                    //TODO GESTIONAR NEGATIVA AL PEER
                 }
                 for (TrackerKeepAlive trackerTemp : trackersActivos.values()) {
                     trackerTemp.setConfirmacionActualizacion(Estado.Esperando);

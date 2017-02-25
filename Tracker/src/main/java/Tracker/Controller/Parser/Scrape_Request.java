@@ -3,7 +3,6 @@ package Tracker.Controller.Parser;
 import Tracker.Controller.TrackerService;
 import Tracker.Model.Peer;
 import Tracker.Model.PeerSmarms;
-import Tracker.Model.PeerSmarmsId;
 import Tracker.Model.Smarms;
 import Tracker.Util.HibernateUtil;
 import Tracker.Util.bittorrent.tracker.protocol.udp.*;
@@ -31,7 +30,7 @@ public class Scrape_Request implements UDP_Message {
         Peer extract = null;
         for(Peer peer: peerList)
         {
-            if(peer.getIdPeer().equals(scrapeRequest.getConnectionId())){
+            if(peer.getConnectionId().equals(scrapeRequest.getConnectionId())){
                 contains = true;
                 extract = peer;
                 break;
@@ -49,7 +48,7 @@ public class Scrape_Request implements UDP_Message {
         ScrapeResponse scrapeResponse = new ScrapeResponse();
         scrapeResponse.setTransactionId(request.getTransactionId());
         List<String> infoHashes = scrapeRequest.getInfoHashes();
-        ScrapeInfo scrapeInfo = null;
+        ScrapeInfo scrapeInfo;
         for ( String infoHash : infoHashes ) {
             List<PeerSmarms> peerSmarmList = HibernateUtil.list(PeerSmarms.class);
             List<Smarms> smarmsList = HibernateUtil.list(PeerSmarms.class);

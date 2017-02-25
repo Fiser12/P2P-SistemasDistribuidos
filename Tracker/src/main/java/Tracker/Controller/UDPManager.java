@@ -4,6 +4,7 @@ import Tracker.Controller.Parser.Announce_Request;
 import Tracker.Controller.Parser.Connection_Request;
 import Tracker.Controller.Parser.Scrape_Request;
 import Tracker.Controller.Parser.UDP_Message;
+import Tracker.Util.HibernateUtil;
 import Tracker.Util.bittorrent.tracker.protocol.udp.BitTorrentUDPRequestMessage;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ public class UDPManager {
     private boolean udpServerAlive;
     private static UDPManager instance = null;
     private InetAddress inetAddress;
+    private static final long TIEMPO_SESION = 2 * 60 * 1000;
 
     private UDPManager() {
         this.udpServerAlive = true;
@@ -28,7 +30,7 @@ public class UDPManager {
         new Thread() {
             public void run() {
                 try {
-                    crearSocket();
+                    hiloEliminarSesiones ();
                     launchServer();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -43,13 +45,10 @@ public class UDPManager {
         return instance;
     }
 
-    private void crearSocket() throws IOException{
+    private void launchServer() throws IOException {
         inetAddress = InetAddress.getByName(TrackerService.getInstance().getTracker().getIp());
         multicastSocket = new MulticastSocket(TrackerService.getInstance().getTracker().getPortPeers());
         multicastSocket.joinGroup(inetAddress);
-
-    }
-    private void launchServer() throws IOException {
         byte[] receiveData = new byte[1024];
 
         while (udpServerAlive) {
@@ -60,7 +59,23 @@ public class UDPManager {
         multicastSocket.leaveGroup(inetAddress);
         multicastSocket.close();
     }
+    private void hiloEliminarSesiones () {
 
+        Thread hiloEliminarSesiones = new Thread() {
+
+            public void run() {
+                try {
+                    Thread.sleep(TIEMPO_SESION);
+                    HibernateUtil.eliminarSesiones();
+                } catch (InterruptedException e1) {
+                    System.err.println("# Interrupted Exception: " + e1.getMessage());
+                }
+
+            }
+        };
+
+        hiloEliminarSesiones.start();
+    }
     private void processData(byte[] data, InetAddress ipClient, int clientPort, DatagramSocket datagramSocket) throws IOException {
         if (TrackerService.getInstance().getTracker().isMaster()) {
             byte[] response = parseData(ipClient, clientPort, data);
