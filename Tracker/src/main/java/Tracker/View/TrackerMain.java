@@ -2,6 +2,8 @@ package Tracker.View;
 
 import Tracker.Controller.JMSManager;
 import Tracker.Controller.TrackerService;
+import Tracker.Model.PeerSmarms;
+import Tracker.Model.Smarms;
 import Tracker.Util.HibernateUtil;
 import Tracker.VO.TrackerKeepAlive;
 
@@ -10,6 +12,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -70,7 +73,7 @@ public class TrackerMain extends JFrame implements Observer {
         setContentPane(mainPanel);
     }
 
-    public synchronized void actualizarInterfaz(ConcurrentHashMap<String, TrackerKeepAlive> valores){
+    public synchronized void actualizarInterfazTrackers(ConcurrentHashMap<String, TrackerKeepAlive> valores){
         table_model_trackers=new DefaultTableModel(column_names_trackers, 0);
         for(Map.Entry<String, TrackerKeepAlive> activeTracker : valores.entrySet()) {
             String[] temp = {activeTracker.getValue().getId(), (activeTracker.getValue().isMaster())?"Si":"No", activeTracker.getValue().getLastKeepAlive().toString(), activeTracker.getValue().getConfirmacionActualizacion().toString() };
@@ -79,9 +82,29 @@ public class TrackerMain extends JFrame implements Observer {
         tableTrackers.setModel(table_model_trackers);
         table_model_trackers.fireTableDataChanged();
     }
+    public synchronized void actualizarInterfazSwarms(ArrayList<Smarms> valores){
+        table_model_smarms = new DefaultTableModel(column_names_smarms, 0);
+        for(Smarms smarms: valores){
+            ArrayList<PeerSmarms> lista = HibernateUtil.list(PeerSmarms.class);
+            int i = 0;
+            for(PeerSmarms peerSmarms: lista) {
+                if(peerSmarms.getSmarms().getSmarmsId().equals(smarms.getSmarmsId()))
+                    i++;
+            }
+            String[] temp = {smarms.getHexInfoHash(), smarms.getTamanoEnBytes().toString(), String.valueOf(i)};
+            table_model_trackers.addRow(temp);
+        }
+        tableSmarms.setModel(table_model_smarms);
+        table_model_smarms.fireTableDataChanged();
+    }
+
     @Override
     public void update(Observable o, Object arg) {
-        actualizarInterfaz((ConcurrentHashMap<String, TrackerKeepAlive>) arg);
+        if(arg instanceof ConcurrentHashMap)
+            actualizarInterfazTrackers((ConcurrentHashMap<String, TrackerKeepAlive>) arg);
+        else if(arg instanceof ArrayList)
+            actualizarInterfazSwarms((ArrayList<Smarms>)arg);
+
     }
     public class MyCellRenderer extends javax.swing.table.DefaultTableCellRenderer {
 

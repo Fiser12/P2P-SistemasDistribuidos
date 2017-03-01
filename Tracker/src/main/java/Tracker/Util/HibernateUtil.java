@@ -13,7 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 
 public class HibernateUtil {
 
@@ -93,10 +93,10 @@ public class HibernateUtil {
         shutdown();
         JMSManager.getInstance().solicitarCambioBBDD();
     }
-    public static List list(Class c){
+    public static ArrayList list(Class c){
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
-        return session.createCriteria(c).list();
+        return new ArrayList(session.createCriteria(c).list());
     }
 
     public static void eliminarSesiones() {
@@ -110,10 +110,10 @@ public class HibernateUtil {
         JMSManager.getInstance().solicitarCambioBBDD();
     }
     public static void updateDatabase(){
+
         if(queryElement1!=null){
             queryElement1.executeUpdate();
             queryElement1 = null;
-
         }
         if(queryElement2!=null){
             queryElement2.executeUpdate();

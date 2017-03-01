@@ -1,5 +1,6 @@
 package Tracker.Controller;
 
+import Tracker.Model.Smarms;
 import Tracker.Util.HibernateUtil;
 import Tracker.VO.Estado;
 import Tracker.VO.TrackerKeepAlive;
@@ -36,7 +37,6 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
         JMSManager.getInstance().suscribir(this);
         hiloDeEnvioDeKeepAlive();
         hiloDeComprobarTrackersActivos();
-
         try {
             while (escuchandoPaquetes) {
                 if (!eligiendoMaster) {
@@ -46,7 +46,6 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
         } catch (JMSException e) {
             System.err.println("Error en el bucle JMS");
         }
-
     }
 
     /**
@@ -244,6 +243,7 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
             if (confirmados+rechazados == trackersActivos.size()) {
                 if(confirmados>rechazados) {
                     HibernateUtil.updateDatabase();
+                    notifyObservers(HibernateUtil.list(Smarms.class));
                     JMSManager.getInstance().confirmacionActualizarBBDD();
                 }
                 for (TrackerKeepAlive trackerTemp : trackersActivos.values()) {
