@@ -75,7 +75,7 @@ public class HibernateUtil {
     {
         for(Object temp: list(clase)){
             if(clase==Smarms.class){
-                if(((Smarms)temp).getSmarmsId().equals(hash))
+                if(((Smarms)temp).getHexInfoHash().equals(hash))
                     return temp;
             }else if(clase==Peer.class){
                 long id = Long.parseLong(hash);
