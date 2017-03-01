@@ -4,7 +4,7 @@ import Tracker.Controller.TrackerService;
 import Tracker.Model.Peer;
 import Tracker.Model.PeerSmarms;
 import Tracker.Model.Smarms;
-import Tracker.Util.HibernateUtil;
+import Tracker.Util.SQLiteUtil;
 import Tracker.Util.bittorrent.tracker.protocol.udp.*;
 import Tracker.Util.bittorrent.tracker.protocol.udp.Error;
 
@@ -26,7 +26,7 @@ public class Announce_Request implements UDP_Message {
     }
     public boolean validate(BitTorrentUDPRequestMessage request, InetAddress clientAddress) {
         AnnounceRequest announceRequest = (AnnounceRequest) request;
-        List<Peer> peerList = HibernateUtil.list(Peer.class);
+        List<Peer> peerList = SQLiteUtil.listPeer();
         boolean exists = false;
         for(Peer peer: peerList){
             if(peer.getConnectionId()==announceRequest.getConnectionId()){
@@ -40,13 +40,13 @@ public class Announce_Request implements UDP_Message {
     public byte[] getResponse(BitTorrentUDPRequestMessage request, InetAddress clientAddress, int clientPort) {
         AnnounceRequest requestMesage = (AnnounceRequest) request;
 
-        Smarms swarm = (Smarms) HibernateUtil.getData(requestMesage.getHexInfoHash(), Smarms.class);
+        Smarms swarm = (Smarms) SQLiteUtil.getData(requestMesage.getHexInfoHash(), Smarms.class);
         PeerSmarms peerSmarms = new PeerSmarms();
         peerSmarms.setSmarms(swarm);
-        peerSmarms.setPeer((Peer) HibernateUtil.getData(String.valueOf(requestMesage.getConnectionId()), Peer.class));
+        peerSmarms.setPeer((Peer) SQLiteUtil.getData(String.valueOf(requestMesage.getConnectionId()), Peer.class));
         peerSmarms.setBytesDescargados(requestMesage.getDownloaded());
-        HibernateUtil.saveData(peerSmarms);
-        List<PeerSmarms> peerSmarmList = HibernateUtil.list(PeerSmarms.class);
+        SQLiteUtil.saveData(peerSmarms);
+        List<PeerSmarms> peerSmarmList = SQLiteUtil.listPeerSmarms();
 
         if (swarm != null) {
             AnnounceResponse announceResponse = sacarSeedersYLeechers(swarm, peerSmarmList);

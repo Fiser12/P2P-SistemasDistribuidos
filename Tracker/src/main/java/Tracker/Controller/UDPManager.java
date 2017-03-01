@@ -4,7 +4,7 @@ import Tracker.Controller.Parser.Announce_Request;
 import Tracker.Controller.Parser.Connection_Request;
 import Tracker.Controller.Parser.Scrape_Request;
 import Tracker.Controller.Parser.UDP_Message;
-import Tracker.Util.HibernateUtil;
+import Tracker.Util.SQLiteUtil;
 import Tracker.Util.bittorrent.tracker.protocol.udp.BitTorrentUDPRequestMessage;
 
 import java.io.IOException;
@@ -21,7 +21,7 @@ public class UDPManager {
     private boolean udpServerAlive;
     private static UDPManager instance = null;
     private InetAddress inetAddress;
-    private static final long TIEMPO_SESION = 2 * 30 * 1000;
+    private static final long TIEMPO_SESION = 60 * 1000;
 
     private UDPManager() {
         this.udpServerAlive = true;
@@ -67,7 +67,7 @@ public class UDPManager {
                 try {
                     while(udpServerAlive) {
                         Thread.sleep(TIEMPO_SESION);
-                        HibernateUtil.eliminarSesiones();
+                        SQLiteUtil.eliminarSesiones();
                     }
                 } catch (InterruptedException e1) {
                     System.err.println("# Interrupted Exception: " + e1.getMessage());
@@ -110,7 +110,6 @@ public class UDPManager {
     }
     private UDP_Message prepararParser(int value){
         UDP_Message parser = null;
-        System.out.println("VALUE: " + value);
         switch(value){
             case 0:
                 parser = Connection_Request.getInstance();

@@ -1,6 +1,6 @@
 package Tracker.Controller;
 
-import Tracker.Util.HibernateUtil;
+import Tracker.Util.SQLiteUtil;
 import Tracker.Util.UtilController;
 import Tracker.VO.TypeMessage;
 
@@ -127,7 +127,7 @@ public class JMSManager {
                     mapMessage = topicSession.createMapMessage();
                     mapMessage.setStringProperty("Type", TypeMessage.BackUp.toString());
                     mapMessage.setString("Id", destino);
-                    mapMessage.setBytes("file", HibernateUtil.getBytesDatabase());
+                    mapMessage.setBytes("file", SQLiteUtil.getBytesDatabase());
                     topicPublisher.publish(mapMessage);
                 }
             } catch (JMSException e) {
@@ -206,7 +206,7 @@ public class JMSManager {
                 MapMessage mapMessage = topicSession.createMapMessage();
                 mapMessage.setStringProperty("Type", TypeMessage.ConfirmToStore.toString());
                 mapMessage.setString("Id", TrackerService.getInstance().getTracker().getId());
-                mapMessage.setBytes("file", HibernateUtil.getBytesDatabase());
+                mapMessage.setBytes("file", SQLiteUtil.getBytesDatabase());
                 topicPublisher.publish(mapMessage);
             }
         } catch (JMSException e) {

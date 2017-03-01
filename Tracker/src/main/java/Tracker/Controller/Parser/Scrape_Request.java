@@ -4,7 +4,7 @@ import Tracker.Controller.TrackerService;
 import Tracker.Model.Peer;
 import Tracker.Model.PeerSmarms;
 import Tracker.Model.Smarms;
-import Tracker.Util.HibernateUtil;
+import Tracker.Util.SQLiteUtil;
 import Tracker.Util.bittorrent.tracker.protocol.udp.*;
 import Tracker.Util.bittorrent.tracker.protocol.udp.Error;
 
@@ -25,7 +25,7 @@ public class Scrape_Request implements UDP_Message {
     }
     public boolean validate(BitTorrentUDPRequestMessage request, InetAddress clientAddress) {
         ScrapeRequest scrapeRequest = (ScrapeRequest) request;
-        List<Peer> peerList = HibernateUtil.list(Peer.class);
+        List<Peer> peerList = SQLiteUtil.listPeer();
         boolean contains = false;
         Peer extract = null;
         for(Peer peer: peerList)
@@ -50,8 +50,8 @@ public class Scrape_Request implements UDP_Message {
         List<String> infoHashes = scrapeRequest.getInfoHashes();
         ScrapeInfo scrapeInfo;
         for ( String infoHash : infoHashes ) {
-            List<PeerSmarms> peerSmarmList = HibernateUtil.list(PeerSmarms.class);
-            List<Smarms> smarmsList = HibernateUtil.list(PeerSmarms.class);
+            List<PeerSmarms> peerSmarmList = SQLiteUtil.listPeerSmarms();
+            List<Smarms> smarmsList = SQLiteUtil.listSmarm();
             scrapeInfo = sacarSeedersYLeechers(smarmsList, peerSmarmList, infoHash);
             scrapeResponse.addScrapeInfo(scrapeInfo);
             if ( scrapeResponse.getScrapeInfos().size() > 0 )

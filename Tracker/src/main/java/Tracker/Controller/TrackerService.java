@@ -28,6 +28,10 @@ public class TrackerService {
         }
         return instance;
     }
+    public TrackerMain getVentana() {
+        return ventana;
+    }
+
 
     public void ejecutarVentana(){
         ventana.setVisible(true);

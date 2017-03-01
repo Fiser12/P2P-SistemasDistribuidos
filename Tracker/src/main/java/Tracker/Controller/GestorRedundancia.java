@@ -1,12 +1,10 @@
 package Tracker.Controller;
 
-import Tracker.Model.Smarms;
-import Tracker.Util.HibernateUtil;
+import Tracker.Util.SQLiteUtil;
 import Tracker.VO.Estado;
 import Tracker.VO.TrackerKeepAlive;
 import Tracker.VO.TypeMessage;
 import org.apache.activemq.command.ActiveMQMapMessage;
-import org.hibernate.Session;
 
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
@@ -138,9 +136,7 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
     }
     private void cargarBBDD()
     {
-        Session session = HibernateUtil.changeDatabase("jdbc:sqlite:tracker_"+TrackerService.getInstance().getTracker().getId()+".db").openSession();
-        session.beginTransaction();
-        session.getTransaction().commit();
+        SQLiteUtil.getDefaultDatabase();
     }
     private void convertirByteEnFichero(byte[] bytes)
     {
@@ -242,8 +238,8 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
             }
             if (confirmados+rechazados == trackersActivos.size()) {
                 if(confirmados>rechazados) {
-                    HibernateUtil.updateDatabase();
-                    notifyObservers(HibernateUtil.list(Smarms.class));
+                    SQLiteUtil.updateDatabase();
+                    TrackerService.getInstance().getVentana().actualizarInterfazSwarms(SQLiteUtil.listSmarm());
                     JMSManager.getInstance().confirmacionActualizarBBDD();
                 }
                 for (TrackerKeepAlive trackerTemp : trackersActivos.values()) {

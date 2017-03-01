@@ -2,6 +2,7 @@ package Tracker.Controller.Parser;
 
 import Tracker.Controller.TrackerService;
 import Tracker.Model.Peer;
+import Tracker.Util.SQLiteUtil;
 import Tracker.Util.bittorrent.tracker.protocol.udp.BitTorrentUDPRequestMessage;
 import Tracker.Util.bittorrent.tracker.protocol.udp.ConnectRequest;
 import Tracker.Util.bittorrent.tracker.protocol.udp.ConnectResponse;
@@ -9,8 +10,6 @@ import Tracker.Util.bittorrent.tracker.protocol.udp.Error;
 
 import java.net.InetAddress;
 import java.util.Random;
-
-import static Tracker.Util.HibernateUtil.saveData;
 
 public class Connection_Request implements UDP_Message
 {
@@ -39,7 +38,7 @@ public class Connection_Request implements UDP_Message
         peer.setIp(clientAddress.getHostAddress());
         peer.setConnectionId(new Long(randomInt));
         peer.setPort(clientPort);
-        saveData(peer);
+        SQLiteUtil.saveData(peer);
         return response.getBytes();
     }
     public byte[] getError(BitTorrentUDPRequestMessage request)
