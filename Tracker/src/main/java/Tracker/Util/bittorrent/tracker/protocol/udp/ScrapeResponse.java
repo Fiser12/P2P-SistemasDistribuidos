@@ -1,7 +1,5 @@
 package Tracker.Util.bittorrent.tracker.protocol.udp;
 
-import Tracker.Util.bittorrent.util.TorrentUtils;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -30,7 +28,6 @@ public class ScrapeResponse extends BitTorrentUDPMessage {
 
     @Override
     public byte[] getBytes() {
-        //TODO Revisar
         int initialSize = 8;
         int scrapeInfoSize = 12;
 
@@ -44,11 +41,11 @@ public class ScrapeResponse extends BitTorrentUDPMessage {
         int inicio = initialSize;
         for (ScrapeInfo scrapeInfo : scrapeInfos) {
             byteBuffer.putInt(inicio, scrapeInfo.getSeeders());
-            inicio += TorrentUtils.INT_SIZE;
+            inicio += 4;
             byteBuffer.putInt(inicio, scrapeInfo.getCompleted());
-            inicio += TorrentUtils.INT_SIZE;
+            inicio += 4;
             byteBuffer.putInt(inicio, scrapeInfo.getLeechers());
-            inicio += TorrentUtils.INT_SIZE;
+            inicio += 4;
         }
         byteBuffer.flip();
 
@@ -56,7 +53,6 @@ public class ScrapeResponse extends BitTorrentUDPMessage {
     }
 
     public static ScrapeResponse parse(byte[] byteArray) {
-        //TODO Revisar
         int initialSize = 8;
         int scrapeInfoSize = 12;
 

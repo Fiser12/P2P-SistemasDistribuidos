@@ -28,7 +28,6 @@ public class ScrapeRequest extends BitTorrentUDPRequestMessage {
 
     @Override
     public byte[] getBytes() {
-        //TODO Revisar
         int hashSize = 20;
         int startSize = 16;
         int size = startSize + hashSize * infoHashes.size();
@@ -49,7 +48,6 @@ public class ScrapeRequest extends BitTorrentUDPRequestMessage {
     }
 
     public static ScrapeRequest parse(byte[] byteArray) {
-        //TODO Revisar
         ByteBuffer byteBuffer = ByteBuffer.wrap(byteArray);
         ScrapeRequest scrapeRequest = new ScrapeRequest();
         scrapeRequest.setConnectionId(byteBuffer.getLong(0));

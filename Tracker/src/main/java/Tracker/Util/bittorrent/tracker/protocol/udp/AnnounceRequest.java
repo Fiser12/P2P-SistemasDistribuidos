@@ -43,7 +43,6 @@ public class AnnounceRequest extends BitTorrentUDPRequestMessage {
     }
 
     public static AnnounceRequest parse(byte[] byteArray) {
-        //TODO REVISAR
         try {
             ByteBuffer byteBuffer = ByteBuffer.wrap(byteArray);
             AnnounceRequest announceRequest = new AnnounceRequest();

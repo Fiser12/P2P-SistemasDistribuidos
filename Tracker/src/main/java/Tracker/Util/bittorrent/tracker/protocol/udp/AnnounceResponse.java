@@ -1,7 +1,5 @@
 package Tracker.Util.bittorrent.tracker.protocol.udp;
 
-import Tracker.Util.bittorrent.util.TorrentUtils;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -35,7 +33,6 @@ public class AnnounceResponse extends BitTorrentUDPMessage {
 
     @Override
     public byte[] getBytes() {
-        //TODO REVISAR TORRENT UTILS
         int size = 20 + 6 * peers.size();
 
         ByteBuffer byteBuffer = ByteBuffer.allocate(size);
@@ -51,7 +48,7 @@ public class AnnounceResponse extends BitTorrentUDPMessage {
             int port = p.getPort();
             int ip = p.getIpAddress();
             byteBuffer.putInt(i, ip);
-            byteBuffer.putShort(i + TorrentUtils.INT_SIZE, (short) port);
+            byteBuffer.putShort(i + 4, (short) port);
             i += 6;
         }
         byteBuffer.flip();
@@ -79,7 +76,7 @@ public class AnnounceResponse extends BitTorrentUDPMessage {
             while ((index + peerSize) < byteArray.length) {
                 peerInfo = new PeerInfo();
                 peerInfo.setIpAddress(buffer.getInt(index));
-                peerInfo.setPort(buffer.getShort(index + TorrentUtils.INT_SIZE));
+                peerInfo.setPort(buffer.getShort(index + 4));
                 msg.getPeers().add(peerInfo);
                 index += peerSize;
             }

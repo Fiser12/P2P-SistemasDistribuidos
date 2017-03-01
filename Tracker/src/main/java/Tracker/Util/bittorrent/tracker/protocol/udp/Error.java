@@ -1,7 +1,5 @@
 package Tracker.Util.bittorrent.tracker.protocol.udp;
 
-import Tracker.Util.bittorrent.util.TorrentUtils;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -21,11 +19,10 @@ public class Error extends BitTorrentUDPMessage {
     }
 
     public static Error parse(byte[] byteArray) {
-        //TODO Revisar
         ByteBuffer byteBuffer = ByteBuffer.wrap(byteArray);
         Error error = new Error();
         error.setAction(Action.valueOf(byteBuffer.getInt(0)));
-        error.setTransactionId(byteBuffer.getInt(TorrentUtils.INT_SIZE));
+        error.setTransactionId(byteBuffer.getInt(4));
 
         byte[] data = new byte[byteArray.length - 8];
         byteBuffer.position(8);
@@ -36,8 +33,6 @@ public class Error extends BitTorrentUDPMessage {
 
     @Override
     public byte[] getBytes() {
-        //TODO Revisar
-
         int size = 8 + message.getBytes().length;
         ByteBuffer byteBuffer = ByteBuffer.allocate(size);
         byteBuffer.order(ByteOrder.BIG_ENDIAN);
