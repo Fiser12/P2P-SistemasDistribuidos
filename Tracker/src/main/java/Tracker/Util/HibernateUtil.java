@@ -34,7 +34,10 @@ public class HibernateUtil {
     }
 
     public static void shutdown() {
-        // Close caches and connection pools
+        if(sessionElement!=null) {
+            sessionElement.close();
+            sessionElement = null;
+        }
         getSessionFactory().close();
     }
     public static SessionFactory changeDatabase(String url){
@@ -49,6 +52,7 @@ public class HibernateUtil {
         file.delete();
     }
     public static byte[] getBytesDatabase(){
+        shutdown();
         File file = new File("tracker_" + TrackerService.getInstance().getTracker().getId() + ".db");
         byte[] bytes = null;
         FileInputStream fis = null;
@@ -86,6 +90,7 @@ public class HibernateUtil {
         Session session = sessionFactory.openSession();
         session.save(obj);
         sessionElement = session;
+        shutdown();
         JMSManager.getInstance().solicitarCambioBBDD();
     }
     public static List list(Class c){
@@ -101,12 +106,14 @@ public class HibernateUtil {
         queryElement1 = session.createQuery(hql);
         hql = String.format("delete from PeerSmarms");
         queryElement2 = session.createQuery(hql);
+        shutdown();
         JMSManager.getInstance().solicitarCambioBBDD();
     }
     public static void updateDatabase(){
         if(queryElement1!=null){
             queryElement1.executeUpdate();
             queryElement1 = null;
+
         }
         if(queryElement2!=null){
             queryElement2.executeUpdate();

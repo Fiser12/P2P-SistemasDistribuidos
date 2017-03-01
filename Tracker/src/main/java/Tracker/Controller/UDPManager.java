@@ -21,7 +21,7 @@ public class UDPManager {
     private boolean udpServerAlive;
     private static UDPManager instance = null;
     private InetAddress inetAddress;
-    private static final long TIEMPO_SESION = 30 * 1000;
+    private static final long TIEMPO_SESION = 2 * 30 * 1000;
 
     private UDPManager() {
         this.udpServerAlive = true;
@@ -54,7 +54,7 @@ public class UDPManager {
         while (udpServerAlive) {
             DatagramPacket datagramPacket = new DatagramPacket(receiveData, receiveData.length);
             multicastSocket.receive(datagramPacket);
-            processData(datagramPacket.getData(), datagramPacket.getAddress(), datagramPacket.getPort(), multicastSocket);
+            procesarPeticion(datagramPacket.getData(), datagramPacket.getAddress(), datagramPacket.getPort(), multicastSocket);
         }
         multicastSocket.leaveGroup(inetAddress);
         multicastSocket.close();
@@ -78,44 +78,40 @@ public class UDPManager {
 
         hiloEliminarSesiones.start();
     }
-    private void processData(byte[] data, InetAddress ipClient, int clientPort, DatagramSocket datagramSocket) throws IOException {
+    private void procesarPeticion(byte[] data, InetAddress clientAddress, int clientPort, DatagramSocket datagramSocket) throws IOException {
         if (TrackerService.getInstance().getTracker().isMaster()) {
-            byte[] response = parseData(ipClient, clientPort, data);
+            byte[] response = null;
+            try {
+                ByteBuffer byteBuffer = ByteBuffer.wrap(data);
+                byteBuffer.order(ByteOrder.BIG_ENDIAN);
+                if (byteBuffer != null) {
+                    int value = byteBuffer.getInt(8);
+                    UDP_Message parser = prepararParser(value);
+                    if(parser!=null){
+                        BitTorrentUDPRequestMessage parsed = parser.parse(data);
+                        if(parsed!=null){
+                            boolean ok = parser.validate(parsed, clientAddress);
+                            if (ok) {
+                                response = parser.getResponse(parsed, clientAddress, clientPort);
+                            } else {
+                                response = parser.getError(parsed);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println(e.getLocalizedMessage());
+            }
             if (response != null && response.length > 0) {
-                DatagramPacket sendPacket = new DatagramPacket(response, response.length, ipClient, clientPort);
+                DatagramPacket sendPacket = new DatagramPacket(response, response.length, clientAddress, clientPort);
                 datagramSocket.send(sendPacket);
             }
         }
     }
-
-    private byte[] parseData(InetAddress clientAddress, int clientPort, byte[] data) {
-        try {
-            ByteBuffer byteBuffer = ByteBuffer.wrap(data);
-            byteBuffer.order(ByteOrder.BIG_ENDIAN);
-            if (byteBuffer != null) {
-                int value = byteBuffer.getInt(8);
-                UDP_Message parser = prepararParser(value);
-                if(parser!=null){
-                    BitTorrentUDPRequestMessage parsed = parser.parse(data);
-                    if(parsed!=null){
-                        boolean ok = parser.validate(parsed, clientAddress);
-                        if (ok) {
-                            return parser.getResponse(parsed, clientAddress, clientPort);
-                        } else {
-                            return parser.getError(parsed);
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.err.println(e.getLocalizedMessage());
-        }
-        return null;
-    }
     private UDP_Message prepararParser(int value){
         UDP_Message parser = null;
-        switch(value)
-        {
+        System.out.println("VALUE: " + value);
+        switch(value){
             case 0:
                 parser = Connection_Request.getInstance();
                 break;

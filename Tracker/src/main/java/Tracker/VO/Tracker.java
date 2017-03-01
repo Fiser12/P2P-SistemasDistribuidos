@@ -3,16 +3,14 @@ package Tracker.VO;
 public class Tracker {
     private String id;
     private String ip;
-    private int port;
     private int portPeers;
     private boolean master;
 
     public Tracker() {
     }
-    public Tracker(String id, String ip, int port, int portPeers) {
+    public Tracker(String id, String ip, int portPeers) {
         this.id = id;
         this.ip = ip;
-        this.port = port;
         this.portPeers = portPeers;
     }
     public Tracker(String id) {
@@ -26,9 +24,6 @@ public class Tracker {
     }
     public void setIpAddress(String ip) {
         this.ip = ip;
-    }
-    public void setPort(int port) {
-        this.port = port;
     }
     public void setPortForPeers(int portForPeers) {
         this.portPeers = portForPeers;

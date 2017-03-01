@@ -40,12 +40,11 @@ public class TrackerService {
         this.tracker = tracker;
     }
 
-    public void connect(String ipAddress, int port, int portForPeers) {
+    public void connect(String ipAddress, int portForPeers) {
         gestorRedundancia.escuchandoPaquetes = true;
         gestorRedundancia.pararHiloKeepAlive = false;
         gestorRedundancia.pararComprobacionKeepAlive = false;
         tracker.setId(UUID.randomUUID().toString().replace("-", ""));
-        tracker.setPort(port);
         tracker.setPortForPeers(portForPeers);
         tracker.setIpAddress(ipAddress);
         tracker.setMaster(false);

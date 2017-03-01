@@ -23,26 +23,10 @@
             <constraints/>
             <properties>
               <columns value="10"/>
-              <text value="224.0.0.4"/>
+              <text value="224.0.0.1"/>
             </properties>
           </component>
           <component id="800e1" class="javax.swing.JSeparator">
-            <constraints/>
-            <properties/>
-          </component>
-          <component id="77608" class="javax.swing.JLabel">
-            <constraints/>
-            <properties>
-              <text value="Port Trackers"/>
-            </properties>
-          </component>
-          <component id="a44e8" class="Tracker.View.IntegerField" binding="portTextField">
-            <constraints/>
-            <properties>
-              <columns value="5"/>
-            </properties>
-          </component>
-          <component id="571be" class="javax.swing.JSeparator">
             <constraints/>
             <properties/>
           </component>
@@ -57,6 +41,10 @@
             <properties>
               <columns value="5"/>
             </properties>
+          </component>
+          <component id="571be" class="javax.swing.JSeparator">
+            <constraints/>
+            <properties/>
           </component>
           <component id="2c095" class="javax.swing.JButton" binding="Start">
             <constraints/>

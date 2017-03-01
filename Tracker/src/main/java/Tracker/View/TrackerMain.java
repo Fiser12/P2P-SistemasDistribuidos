@@ -17,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class TrackerMain extends JFrame implements Observer {
     private JTextField ipTextField;
-    private IntegerField portTextField;
     private IntegerField portPeersTextField;
     private JButton Start;
     private JPanel toolbar;
@@ -38,7 +37,7 @@ public class TrackerMain extends JFrame implements Observer {
         pack();
         setSize(700, 500);
         setMinimumSize(new Dimension(700, 400));
-
+        tableTrackers = new JTable(table_model_trackers);
         trackersPanel.add(tableTrackers.getTableHeader(), BorderLayout.NORTH);
         trackersPanel.add(tableTrackers, BorderLayout.CENTER);
         tableSmarms = new JTable(table_model_smarms);
@@ -47,13 +46,12 @@ public class TrackerMain extends JFrame implements Observer {
         smarmsPanel.add(tableSmarms.getTableHeader(), BorderLayout.NORTH);
         smarmsPanel.add(tableSmarms, BorderLayout.CENTER);
         portPeersTextField.setText("2000");
-        portTextField.setText("3000");
         Start.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (Start.getText().equals("Start")){
                     Start.setText("Stop");
-                    TrackerService.getInstance().connect(ipTextField.getText(), portTextField.getNumber(), portPeersTextField.getNumber());
+                    TrackerService.getInstance().connect(ipTextField.getText(), portPeersTextField.getNumber());
                 }
                 else {
                     Start.setText("Start");
