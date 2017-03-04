@@ -145,22 +145,27 @@ public class SQLiteUtil {
                 connect();
                 PreparedStatement ps = connect.prepareStatement(sql1);
                 ps.execute();
+                System.out.println(sql1);
                 sql1 = null;
                 close();
             } catch (SQLException e) {
-                System.out.println(sql1);
                 e.printStackTrace();
+                System.out.println("ERR:"+sql1);
+
             }
         }
-        else if(sql2 !=null) {
+        if(sql2 !=null) {
             try {
                 connect();
                 PreparedStatement ps = connect.prepareStatement(sql2);
                 ps.execute();
+                System.out.println(sql2);
                 sql2 = null;
                 close();
             } catch (SQLException e) {
                 e.printStackTrace();
+                System.out.println("ERR:"+sql2);
+
             }
         }
     }

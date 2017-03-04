@@ -92,9 +92,9 @@ public class UDPManager {
                         if(parsed!=null){
                             boolean ok = parser.validate(parsed, clientAddress);
                             if (ok) {
-                                response = parser.getResponse(parsed, clientAddress, clientPort);
+                                response = parser.sendResponse(parsed, clientAddress, clientPort);
                             } else {
-                                response = parser.getError(parsed);
+                                response = parser.sendError(parsed, "Error validation");
                             }
                         }
                     }

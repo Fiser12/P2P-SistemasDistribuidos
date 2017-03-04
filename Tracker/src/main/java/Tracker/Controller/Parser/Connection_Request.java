@@ -9,6 +9,7 @@ import Tracker.Util.bittorrent.tracker.protocol.udp.ConnectResponse;
 import Tracker.Util.bittorrent.tracker.protocol.udp.Error;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Connection_Request implements UDP_Message
@@ -27,7 +28,7 @@ public class Connection_Request implements UDP_Message
     {
         return request.getConnectionId() == Long.decode("0x41727101980");
     }
-    public byte[] getResponse(BitTorrentUDPRequestMessage request, InetAddress clientAddress, int clientPort)
+    public byte[] sendResponse(BitTorrentUDPRequestMessage request, InetAddress clientAddress, int clientPort)
     {
         ConnectResponse response = new ConnectResponse();
         response.setTransactionId(request.getTransactionId());
@@ -39,10 +40,15 @@ public class Connection_Request implements UDP_Message
         peer.setIp(clientAddress.getHostAddress());
         peer.setConnectionId(new Long(randomInt));
         peer.setPort(clientPort);
+        ArrayList<Peer> peers = SQLiteUtil.listPeer();
+        for(Peer peerTemp: peers)
+            if(peerTemp.getIdPeer()==request.getTransactionId()) {
+                return sendError(request, "Error en el proceso de conexión");
+            }
         SQLiteUtil.saveData(peer);
         return response.getBytes();
     }
-    public byte[] getError(BitTorrentUDPRequestMessage request)
+    public byte[] sendError(BitTorrentUDPRequestMessage request, String errorString)
     {
         if(TrackerService.getInstance().getTracker().isMaster()) {
             Error error = new Error();

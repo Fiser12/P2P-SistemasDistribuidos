@@ -48,13 +48,10 @@ public class PeerTest {
         return new TimerTask() {
             @Override
             public void run() {
-                if(id!=-1){
-                    System.out.println("Necesito un nuevo ID");
-                    try {
-                        connectionRequest(clientSocket, serverHost);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+            try {
+                    connectionRequest(clientSocket, serverHost);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         };

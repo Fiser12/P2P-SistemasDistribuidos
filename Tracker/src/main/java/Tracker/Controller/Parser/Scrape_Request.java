@@ -43,7 +43,7 @@ public class Scrape_Request implements UDP_Message {
                 contains &&
                 extract.getIp().equals(clientAddress.getHostAddress());
     }
-    public byte[] getResponse(BitTorrentUDPRequestMessage request, InetAddress clientAddress, int clientPort) {
+    public byte[] sendResponse(BitTorrentUDPRequestMessage request, InetAddress clientAddress, int clientPort) {
         ScrapeRequest scrapeRequest = (ScrapeRequest) request;
         ScrapeResponse scrapeResponse = new ScrapeResponse();
         scrapeResponse.setTransactionId(request.getTransactionId());
@@ -57,7 +57,7 @@ public class Scrape_Request implements UDP_Message {
             if ( scrapeResponse.getScrapeInfos().size() > 0 )
                 return scrapeResponse.getBytes();
             else
-                 return getError(request);
+                return sendError(request, "Error en el proceso de scrape");
         }
         return null;
     }
@@ -88,10 +88,10 @@ public class Scrape_Request implements UDP_Message {
         return scrapeInfo;
     }
 
-    public byte[] getError(BitTorrentUDPRequestMessage request) {
+    public byte[] sendError(BitTorrentUDPRequestMessage request, String errorString) {
         if(TrackerService.getInstance().getTracker().isMaster()) {
             Error error = new Error();
-            error.setMessage("Error en el proceso de scrape");
+            error.setMessage(errorString);
             error.setTransactionId(request.getTransactionId());
             return error.getBytes();
         }

@@ -37,7 +37,7 @@ public class Announce_Request implements UDP_Message {
                 announceRequest.getAction() == BitTorrentUDPMessage.Action.ANNOUNCE &&
                 exists;
     }
-    public byte[] getResponse(BitTorrentUDPRequestMessage request, InetAddress clientAddress, int clientPort) {
+    public byte[] sendResponse(BitTorrentUDPRequestMessage request, InetAddress clientAddress, int clientPort) {
         AnnounceRequest requestMesage = (AnnounceRequest) request;
 
         Smarms swarm = (Smarms) SQLiteUtil.getData(requestMesage.getHexInfoHash(), Smarms.class);
@@ -53,7 +53,7 @@ public class Announce_Request implements UDP_Message {
             announceResponse.setTransactionId(request.getTransactionId());
             return announceResponse.getBytes();
         }
-        return getError(request);
+        return sendError(request, "Error en el proceso de announce");
 
     }
     private AnnounceResponse sacarSeedersYLeechers(Smarms smarms, List<PeerSmarms> peerSmarmList)
@@ -82,10 +82,10 @@ public class Announce_Request implements UDP_Message {
         return announceResponse;
     }
 
-    public byte[] getError(BitTorrentUDPRequestMessage request) {
+    public byte[] sendError(BitTorrentUDPRequestMessage request, String errorString) {
         if(TrackerService.getInstance().getTracker().isMaster()) {
             Error error = new Error();
-            error.setMessage("Error en el proceso de announce");
+            error.setMessage(errorString);
             error.setTransactionId(request.getTransactionId());
             return error.getBytes();
         }
