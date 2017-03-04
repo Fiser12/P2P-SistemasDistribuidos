@@ -43,7 +43,7 @@ public class Connection_Request implements UDP_Message
         ArrayList<Peer> peers = SQLiteUtil.listPeer();
         for(Peer peerTemp: peers)
             if(peerTemp.getIdPeer()==request.getTransactionId()) {
-                return sendError(request, "Error en el proceso de conexión");
+                return null;
             }
         SQLiteUtil.saveData(peer);
         return response.getBytes();
