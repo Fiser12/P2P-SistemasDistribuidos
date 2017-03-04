@@ -4,6 +4,7 @@ import Tracker.Util.bittorrent.tracker.protocol.udp.*;
 import Tracker.Util.bittorrent.tracker.protocol.udp.Error;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -14,13 +15,13 @@ import java.util.TimerTask;
 public class PeerTest {
     private int idFinal;
     private int port = 2000;
-    private InetAddress serverHost;
-    private DatagramSocket clientSocket;
+    private InetAddress trackerHost;
+    private DatagramSocket datagramSocket;
     private ConnectResponse connectResponse;
 
     public PeerTest() throws UnknownHostException, SocketException {
-        serverHost = InetAddress.getByName("224.0.0.1");
-        clientSocket = new DatagramSocket();
+        trackerHost = InetAddress.getByName("224.0.0.1");
+        datagramSocket = new DatagramSocket();
     }
     public void start() throws IOException {
         new Thread(new Runnable() {
@@ -42,7 +43,7 @@ public class PeerTest {
         byte[] receiveData = new byte[1024];
         while(true){
             DatagramPacket packet = new DatagramPacket(receiveData, receiveData.length);
-            clientSocket.receive(packet);
+            datagramSocket.receive(packet);
             byte[] data = packet.getData();
             ByteBuffer buffer = ByteBuffer.wrap(data);
             buffer = buffer.order(ByteOrder.BIG_ENDIAN);
@@ -59,6 +60,10 @@ public class PeerTest {
                     if(connectResponse.getBytes().length >= 16){
                         idFinal = connectResponse.getTransactionId();
                         System.err.println("ID RECIBIDO: " + idFinal);
+                        try {
+                            announceRequestTest(datagramSocket, trackerHost, AnnounceRequest.Event.NONE);
+                        } catch (IOException ignored) {
+                        }
                     }else{
                         System.err.println("PEER: ERROR CONNECTION");
                     }
@@ -102,11 +107,37 @@ public class PeerTest {
             @Override
             public void run() {
             try {
-                    connectionRequest(clientSocket, serverHost);
+                    connectionRequest(datagramSocket, trackerHost);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         };
     }
+
+
+    private void announceRequestTest(DatagramSocket datagramSocket, InetAddress trackerHost, AnnounceRequest.Event requestedEvent) throws IOException {
+        AnnounceRequest request = new AnnounceRequest();
+        request.setConnectionId(connectResponse.getConnectionId());
+        request.setAction(BitTorrentUDPMessage.Action.ANNOUNCE);
+        request.setTransactionId(connectResponse.getTransactionId());
+        String hex = "14245AE";
+        request.setInfoHash(new BigInteger(hex,16).toByteArray());
+        request.setPeerId(String.valueOf(this.idFinal));
+        request.setDownloaded(2000);
+        request.setLeft(200);
+        request.setUploaded(3000);
+        request.setEvent(requestedEvent);
+        PeerInfo info = new PeerInfo();
+        info.setIpAddress(0);
+        info.setPort(this.port);
+        request.setPeerInfo(info);
+        request.setKey(new Random().nextInt(Integer.MAX_VALUE));
+        request.setNumWant(-1);
+        byte[] requestBytes = request.getBytes();
+        DatagramPacket packet = new DatagramPacket(requestBytes, requestBytes.length, trackerHost, port);
+        System.out.println("Announce mandado a " + trackerHost.getHostAddress());
+        datagramSocket.send(packet);
+    }
+
 }
