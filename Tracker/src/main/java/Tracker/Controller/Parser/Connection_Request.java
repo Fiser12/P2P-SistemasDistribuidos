@@ -35,6 +35,7 @@ public class Connection_Request implements UDP_Message
         long randomInt = random.nextLong();
         response.setConnectionId(randomInt);
         Peer peer = new Peer();
+        peer.setIdPeer(Long.valueOf(request.getTransactionId()));
         peer.setIp(clientAddress.getHostAddress());
         peer.setConnectionId(new Long(randomInt));
         peer.setPort(clientPort);

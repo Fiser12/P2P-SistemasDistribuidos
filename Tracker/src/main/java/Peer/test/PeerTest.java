@@ -8,13 +8,13 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class PeerClient {
+public class PeerTest {
     private int id;
     private int port = 2000;
     private InetAddress serverHost;
     private DatagramSocket clientSocket;
 
-    public PeerClient() throws UnknownHostException, SocketException {
+    public PeerTest() throws UnknownHostException, SocketException {
         serverHost = InetAddress.getByName("224.0.0.1");
         clientSocket = new DatagramSocket();
     }

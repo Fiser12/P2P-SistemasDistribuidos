@@ -16,8 +16,8 @@ import java.util.ArrayList;
 
 public class SQLiteUtil {
 
-    private static PreparedStatement st;
-    private static PreparedStatement st2;
+    private static String sql1;
+    private static String sql2;
 
     private static Connection connect;
 
@@ -89,6 +89,7 @@ public class SQLiteUtil {
         } catch (SQLException ex) {
             System.err.println(ex.getMessage());
         }
+        close();
         return lista;
     }
     public static ArrayList<Smarms> listSmarm(){
@@ -108,6 +109,7 @@ public class SQLiteUtil {
         } catch (SQLException ex) {
             System.err.println(ex.getMessage());
         }
+        close();
         return lista;
     }
     public static ArrayList<PeerSmarms> listPeerSmarms(){
@@ -127,39 +129,40 @@ public class SQLiteUtil {
         } catch (SQLException ex) {
             System.err.println(ex.getMessage());
         }
+        close();
         return lista;
     }
 
     public static void eliminarSesiones() {
-        connect();
-        try {
-            st = connect.prepareStatement("DELETE FROM peer_smarmses");
-            st2 = connect.prepareStatement("DELETE FROM peer");
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+        sql1 = "DELETE FROM peer_smarmses";
+        sql2 = "DELETE FROM peer";
         JMSManager.getInstance().solicitarCambioBBDD();
     }
 
     public static void updateDatabase(){
-        if(st!=null) {
+        if(sql1 !=null) {
             try {
-                st.execute();
-                st = null;
+                connect();
+                PreparedStatement ps = connect.prepareStatement(sql1);
+                ps.execute();
+                sql1 = null;
+                close();
+            } catch (SQLException e) {
+                System.out.println(sql1);
+                e.printStackTrace();
+            }
+        }
+        else if(sql2 !=null) {
+            try {
+                connect();
+                PreparedStatement ps = connect.prepareStatement(sql2);
+                ps.execute();
+                sql2 = null;
+                close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-        if(st2!=null) {
-            try {
-                st2.execute();
-                st2 = null;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        close();
     }
 
     public static void connect(){
@@ -180,38 +183,15 @@ public class SQLiteUtil {
         }
     }
     public static void save(Smarms smarms){
-        try {
-            st = connect.prepareStatement("insert into smarms (SMARMS_ID, hexInfoHash, SMARMS_TAMANO) values (?,?,?)");
-            st.setString(1, smarms.getHexInfoHash());
-            st.setString(2, smarms.getHexInfoHash());
-            st.setInt(3, smarms.getTamanoEnBytes());
-        } catch (SQLException ex) {
-            System.err.println(ex.getMessage());
-        }
+        sql1 = "insert into smarms (SMARMS_ID, hexInfoHash, SMARMS_TAMANO) values ('"+smarms.getHexInfoHash()+"','"+smarms.getHexInfoHash()+"',"+smarms.getTamanoEnBytes()+")";
     }
     public static void save(Peer peer){
-        try {
-            st = connect.prepareStatement("insert into peer (PEER_ID, connectionId, PEER_IP, PEER_PORT) values (?,?,?,?)");
-            st.setLong(1, peer.getConnectionId());
-            st.setLong(2, peer.getConnectionId());
-            st.setString(3, peer.getIp());
-            st.setInt(4, peer.getPort().intValue());
-        } catch (SQLException ex) {
-            System.err.println(ex.getMessage());
-        }
+        sql1 = "insert into peer (PEER_ID, connectionId, PEER_IP, PEER_PORT) values ("+peer.getIdPeer()+","+peer.getConnectionId()+",'"+peer.getIp()+"',"+peer.getPort().intValue()+")";
     }
     public static void save(PeerSmarms peerSmarms){
-        try {
-            st = connect.prepareStatement("insert into peer_smarmses (PEER_ID, SMARMS_ID, BYTES_DESCARGADOS) values (?,?,?)");
-            st.setLong(1, peerSmarms.getPeer().getIdPeer());
-            st.setString(2, peerSmarms.getSmarms().getSmarmsId());
-            st.setLong(3, peerSmarms.getBytesDescargados());
-        } catch (SQLException ex) {
-            System.err.println(ex.getMessage());
-        }
+        sql1 = "insert into peer_smarmses (PEER_ID, SMARMS_ID, BYTES_DESCARGADOS) values ("+peerSmarms.getPeer().getIdPeer()+",'"+peerSmarms.getSmarms().getSmarmsId()+"',"+peerSmarms.getBytesDescargados()+")";
     }
     public static void saveData(Object obj){
-        connect();
         if(obj instanceof Smarms)
             save((Smarms)obj);
         else if(obj instanceof Peer)
