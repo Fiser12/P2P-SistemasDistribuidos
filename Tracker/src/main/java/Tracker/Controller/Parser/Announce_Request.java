@@ -39,7 +39,7 @@ public class Announce_Request implements UDP_Message {
     }
     public byte[] sendResponse(BitTorrentUDPRequestMessage request, InetAddress clientAddress, int clientPort) {
         AnnounceRequest requestMesage = (AnnounceRequest) request;
-
+        System.out.println(requestMesage.getHexInfoHash());
         Smarms swarm = (Smarms) SQLiteUtil.getData(requestMesage.getHexInfoHash(), Smarms.class);
         PeerSmarms peerSmarms = new PeerSmarms();
         peerSmarms.setSmarms(swarm);

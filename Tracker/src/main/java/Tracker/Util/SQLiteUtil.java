@@ -97,19 +97,21 @@ public class SQLiteUtil {
         ArrayList<Smarms> lista = new ArrayList<>();
         ResultSet result = null;
         try {
-            PreparedStatement st = connect.prepareStatement("select * from smarms");
+            PreparedStatement st = connect.prepareStatement("SELECT smarms.*, (SELECT COUNT(*) FROM peer_smarmses WHERE smarms.SMARMS_ID = peer_smarmses.SMARMS_ID) AS numberPeers FROM smarms");
             result = st.executeQuery();
             while (result.next()) {
                 Smarms smarms = new Smarms();
                 smarms.setSmarmsId(result.getString("SMARMS_ID"));
                 smarms.setHexInfoHash(result.getString("hexInfoHash"));
                 smarms.setTamanoEnBytes(result.getInt("SMARMS_TAMANO"));
+                smarms.setNumeroPares(result.getInt("numberPeers"));
                 lista.add(smarms);
             }
         } catch (SQLException ex) {
             System.err.println(ex.getMessage());
+        }finally {
+            close();
         }
-        close();
         return lista;
     }
     public static ArrayList<PeerSmarms> listPeerSmarms(){

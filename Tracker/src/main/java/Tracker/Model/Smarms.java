@@ -16,6 +16,7 @@ public class Smarms implements java.io.Serializable, Observable {
 	private String smarmsId;
 	private String hexInfoHash;
 	private Integer tamanoEnBytes;
+	private Integer numeroPares;
 	private Set<PeerSmarms> peerSmarmses = new HashSet<PeerSmarms>(0);
 
 	public Smarms() {
@@ -72,6 +73,13 @@ public class Smarms implements java.io.Serializable, Observable {
 
 	public void addListener(InvalidationListener listener) {
 
+	}
+	public Integer getNumeroPares() {
+		return numeroPares;
+	}
+
+	public void setNumeroPares(Integer numeroPares) {
+		this.numeroPares = numeroPares;
 	}
 
 	public void removeListener(InvalidationListener listener) {

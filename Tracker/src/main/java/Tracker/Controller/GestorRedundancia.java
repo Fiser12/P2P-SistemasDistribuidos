@@ -239,7 +239,7 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
             if (confirmados+rechazados == trackersActivos.size()) {
                 if(confirmados>rechazados) {
                     SQLiteUtil.updateDatabase();
-                    TrackerService.getInstance().getVentana().actualizarInterfazSwarms(SQLiteUtil.listSmarm());
+                    TrackerService.getInstance().getVentana().actualizarInterfazSwarms();
                     JMSManager.getInstance().confirmacionActualizarBBDD();
                 }
                 for (TrackerKeepAlive trackerTemp : trackersActivos.values()) {

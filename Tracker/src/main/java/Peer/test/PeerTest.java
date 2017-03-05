@@ -121,7 +121,7 @@ public class PeerTest {
         request.setConnectionId(connectResponse.getConnectionId());
         request.setAction(BitTorrentUDPMessage.Action.ANNOUNCE);
         request.setTransactionId(connectResponse.getTransactionId());
-        String hex = "14245AE";
+        String hex = "014245AE00000000000000000000000000000000";
         request.setInfoHash(new BigInteger(hex,16).toByteArray());
         request.setPeerId(String.valueOf(this.idFinal));
         request.setDownloaded(2000);

@@ -83,16 +83,11 @@ public class TrackerMain extends JFrame implements Observer {
         tableTrackers.setModel(table_model_trackers);
         table_model_trackers.fireTableDataChanged();
     }
-    public synchronized void actualizarInterfazSwarms(ArrayList<Smarms> valores){
+    public synchronized void actualizarInterfazSwarms(){
         table_model_smarms = new DefaultTableModel(column_names_smarms, 0);
+        ArrayList<Smarms> valores = SQLiteUtil.listSmarm();
         for(Smarms smarms: valores){
-            ArrayList<PeerSmarms> lista = SQLiteUtil.listPeerSmarms();
-            int i = 0;
-            for(PeerSmarms peerSmarms: lista) {
-                if(peerSmarms.getSmarms().getSmarmsId().equals(smarms.getSmarmsId()))
-                    i++;
-            }
-            String[] temp = {smarms.getHexInfoHash(), smarms.getTamanoEnBytes().toString(), String.valueOf(i)};
+            String[] temp = {smarms.getHexInfoHash(), smarms.getTamanoEnBytes().toString(), String.valueOf(smarms.getNumeroPares())};
             table_model_smarms.addRow(temp);
         }
         tableSmarms.setModel(table_model_smarms);
