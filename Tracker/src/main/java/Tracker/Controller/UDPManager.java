@@ -67,7 +67,7 @@ public class UDPManager {
                 try {
                     while(udpServerAlive) {
                         Thread.sleep(TIEMPO_SESION);
-                        SQLiteUtil.eliminarSesiones();
+                        SQLiteUtil.getInstance().eliminarSesiones();
                     }
                 } catch (InterruptedException e1) {
                     System.err.println("# Interrupted Exception: " + e1.getMessage());
@@ -100,7 +100,7 @@ public class UDPManager {
                     }
                 }
             } catch (Exception e) {
-                System.err.println(e.getLocalizedMessage());
+                e.printStackTrace();
             }
             if (response != null && response.length > 0) {
                 DatagramPacket sendPacket = new DatagramPacket(response, response.length, clientAddress, clientPort);

@@ -127,7 +127,7 @@ public class JMSManager {
                     mapMessage = topicSession.createMapMessage();
                     mapMessage.setStringProperty("Type", TypeMessage.BackUp.toString());
                     mapMessage.setString("Id", destino);
-                    mapMessage.setBytes("file", SQLiteUtil.getBytesDatabase());
+                    mapMessage.setBytes("file", SQLiteUtil.getInstance().getBytesDatabase());
                     topicPublisher.publish(mapMessage);
                 }
             } catch (JMSException e) {
@@ -138,7 +138,7 @@ public class JMSManager {
                 e.printStackTrace();
             }
     }
-    public void solicitarCambioBBDD() {
+    public void solicitarCambioBBDD(String id) {
         try {
             if (instance != null) {
                 Topic topicConfirm = (Topic) context.lookup(UtilController.JNDISoliciteChangeBBDD);
@@ -147,6 +147,7 @@ public class JMSManager {
                 MapMessage mapMessage = topicSession.createMapMessage();
                 mapMessage.setStringProperty("Type", TypeMessage.SolicitaCambioBBDD.toString());
                 mapMessage.setString("Id", TrackerService.getInstance().getTracker().getId());
+                mapMessage.setString("IdDatabase", id);
                 topicPublisher.publish(mapMessage);
             }
         } catch (JMSException e) {
@@ -157,7 +158,7 @@ public class JMSManager {
             e.printStackTrace();
         }
     }
-    public void confirmacionListoParaGuardar() {
+    public void confirmacionListoParaGuardar(String idDatabase) {
         try {
             if (instance != null) {
                 Topic topicReady = (Topic) context.lookup(UtilController.JNDIReadyToStore);
@@ -167,6 +168,7 @@ public class JMSManager {
                 mapMessage.setStringProperty("Type", TypeMessage.ReadyToStore.toString());
                 mapMessage.setString("Id", TrackerService.getInstance().getTracker().getId());
                 mapMessage.setBoolean("Listo", true);
+                mapMessage.setString("IdDatabase", idDatabase);
                 topicPublisher.publish(mapMessage);
             }
         } catch (JMSException e) {
@@ -177,7 +179,7 @@ public class JMSManager {
             e.printStackTrace();
         }
     }
-    public void rechazoListoParaGuardar() {
+    public void rechazoListoParaGuardar(String idDatabase) {
         try {
             if (instance != null) {
                 Topic topicReady = (Topic) context.lookup(UtilController.JNDIReadyToStore);
@@ -187,6 +189,8 @@ public class JMSManager {
                 mapMessage.setStringProperty("Type", TypeMessage.ReadyToStore.toString());
                 mapMessage.setString("Id", TrackerService.getInstance().getTracker().getId());
                 mapMessage.setBoolean("Listo", false);
+                mapMessage.setString("IdDatabase", idDatabase);
+
                 topicPublisher.publish(mapMessage);
             }
         } catch (JMSException e) {
@@ -206,7 +210,7 @@ public class JMSManager {
                 MapMessage mapMessage = topicSession.createMapMessage();
                 mapMessage.setStringProperty("Type", TypeMessage.ConfirmToStore.toString());
                 mapMessage.setString("Id", TrackerService.getInstance().getTracker().getId());
-                mapMessage.setBytes("file", SQLiteUtil.getBytesDatabase());
+                mapMessage.setBytes("file", SQLiteUtil.getInstance().getBytesDatabase());
                 topicPublisher.publish(mapMessage);
             }
         } catch (JMSException e) {

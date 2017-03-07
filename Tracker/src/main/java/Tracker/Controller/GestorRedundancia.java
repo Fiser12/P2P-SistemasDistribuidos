@@ -136,7 +136,7 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
     }
     private void cargarBBDD()
     {
-        SQLiteUtil.getDefaultDatabase();
+        SQLiteUtil.getInstance().getDefaultDatabase();
     }
     private void convertirByteEnFichero(byte[] bytes)
     {
@@ -194,7 +194,6 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
                         }
                     }
                     TrackerKeepAlive activeTracker = new TrackerKeepAlive();
-                    activeTracker.setConfirmacionActualizacion(Estado.Esperando);
                     activeTracker.setId(id);
                     activeTracker.setLastKeepAlive(new Date());
                     activeTracker.setMaster(master);
@@ -218,41 +217,43 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
     private void comprobarSiEstanPreparados(Object[] datos)
     {
         if (TrackerService.getInstance().getTracker().isMaster()) {
+            String idDatabase = (String) datos[1];
             Boolean listo = (Boolean) datos[0];
-            String id = (String) datos[1];
+            String id = (String) datos[2];
             TrackerKeepAlive tracker = trackersActivos.get(id);
 
             if(listo)
-                tracker.setConfirmacionActualizacion(Estado.Confirmado);
+                tracker.setConfirmacionActualizacion(idDatabase, Estado.Confirmado);
             else
-                tracker.setConfirmacionActualizacion(Estado.Rechazado);
+                tracker.setConfirmacionActualizacion(idDatabase, Estado.Rechazado);
 
             int confirmados = 0;
             int rechazados = 0;
             for (TrackerKeepAlive trackerTemp : trackersActivos.values()) {
-                if (trackerTemp.getConfirmacionActualizacion() == Estado.Confirmado) {
+                if (trackerTemp.getConfirmacionActualizacion(idDatabase) == Estado.Confirmado) {
                     confirmados++;
-                }else if(trackerTemp.getConfirmacionActualizacion() == Estado.Rechazado){
+                }else if(trackerTemp.getConfirmacionActualizacion(idDatabase) == Estado.Rechazado){
                     rechazados++;
                 }
             }
             if (confirmados+rechazados == trackersActivos.size()) {
                 if(confirmados>rechazados) {
-                    SQLiteUtil.updateDatabase();
+                    SQLiteUtil.getInstance().updateDatabase(idDatabase);
                     TrackerService.getInstance().getVentana().actualizarInterfazSwarms();
                     JMSManager.getInstance().confirmacionActualizarBBDD();
                 }
                 for (TrackerKeepAlive trackerTemp : trackersActivos.values()) {
-                    trackerTemp.setConfirmacionActualizacion(Estado.Esperando);
+                    trackerTemp.removeConfirmacionActualizacion(idDatabase);
                 }
             }
         }
     }
-    private void respuestaACambio(){
+    private void respuestaACambio(Object[] datos){
+        String idDatabase = (String)datos[0];
         if(escuchandoPaquetes&&!eligiendoMaster&&!esperandoID){
-            JMSManager.getInstance().confirmacionListoParaGuardar();
+            JMSManager.getInstance().confirmacionListoParaGuardar(idDatabase);
         }else{
-            JMSManager.getInstance().rechazoListoParaGuardar();
+            JMSManager.getInstance().rechazoListoParaGuardar(idDatabase);
         }
     }
     /**
@@ -289,7 +290,7 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
                         idCorrecto(data.toArray());
                         break;
                     case SolicitaCambioBBDD:
-                        respuestaACambio();
+                        respuestaACambio(data.toArray());
                         break;
                     case ReadyToStore:
                         comprobarSiEstanPreparados(data.toArray());

@@ -26,28 +26,19 @@ public class Announce_Request implements UDP_Message {
     }
     public boolean validate(BitTorrentUDPRequestMessage request, InetAddress clientAddress) {
         AnnounceRequest announceRequest = (AnnounceRequest) request;
-        List<Peer> peerList = SQLiteUtil.listPeer();
-        boolean exists = false;
-        for(Peer peer: peerList){
-            if(peer.getConnectionId()==announceRequest.getConnectionId()){
-                exists = true;
-            }
-        }
         return announceRequest.getBytes().length == 98 &&
-                announceRequest.getAction() == BitTorrentUDPMessage.Action.ANNOUNCE &&
-                exists;
+                announceRequest.getAction() == BitTorrentUDPMessage.Action.ANNOUNCE;
     }
-    public byte[] sendResponse(BitTorrentUDPRequestMessage request, InetAddress clientAddress, int clientPort) {
+    public synchronized byte[] sendResponse(BitTorrentUDPRequestMessage request, InetAddress clientAddress, int clientPort) {
         AnnounceRequest requestMesage = (AnnounceRequest) request;
-        System.out.println(requestMesage.getHexInfoHash());
-        Smarms swarm = (Smarms) SQLiteUtil.getData(requestMesage.getHexInfoHash(), Smarms.class);
+        Smarms swarm = SQLiteUtil.getInstance().getData(requestMesage.getHexInfoHash(), Smarms.class);
+        Peer peer = SQLiteUtil.getInstance().getData(String.valueOf(requestMesage.getConnectionId()), Peer.class);
         PeerSmarms peerSmarms = new PeerSmarms();
         peerSmarms.setSmarms(swarm);
-        peerSmarms.setPeer((Peer) SQLiteUtil.getData(String.valueOf(requestMesage.getConnectionId()), Peer.class));
+        peerSmarms.setPeer(peer);
         peerSmarms.setBytesDescargados(requestMesage.getDownloaded());
-        SQLiteUtil.saveData(peerSmarms);
-        List<PeerSmarms> peerSmarmList = SQLiteUtil.listPeerSmarms();
-
+        SQLiteUtil.getInstance().saveData(peerSmarms, this);
+        List<PeerSmarms> peerSmarmList = SQLiteUtil.getInstance().listPeerSmarms();
         if (swarm != null) {
             AnnounceResponse announceResponse = sacarSeedersYLeechers(swarm, peerSmarmList);
             announceResponse.setTransactionId(request.getTransactionId());
@@ -61,7 +52,6 @@ public class Announce_Request implements UDP_Message {
         ArrayList<PeerSmarms> seeder = new ArrayList<>();
         ArrayList<PeerSmarms> leecher = new ArrayList<>();
         ArrayList<PeerInfo> peerInfoList = new ArrayList<>();
-
         if(smarms!=null)
             for(PeerSmarms temp: peerSmarmList)
                 if(temp.getSmarms().getHexInfoHash().equals(smarms.getHexInfoHash())) {
@@ -75,7 +65,7 @@ public class Announce_Request implements UDP_Message {
                     peerInfoList.add(peerInfo);
                 }
         AnnounceResponse announceResponse = new AnnounceResponse();
-        announceResponse.setInterval(30);
+        announceResponse.setInterval(60);
         announceResponse.setLeechers(leecher.size());
         announceResponse.setSeeders(seeder.size());
         announceResponse.setPeers(peerInfoList);

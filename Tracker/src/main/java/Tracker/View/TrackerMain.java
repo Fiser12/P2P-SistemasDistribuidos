@@ -2,7 +2,6 @@ package Tracker.View;
 
 import Tracker.Controller.JMSManager;
 import Tracker.Controller.TrackerService;
-import Tracker.Model.PeerSmarms;
 import Tracker.Model.Smarms;
 import Tracker.Util.SQLiteUtil;
 import Tracker.VO.TrackerKeepAlive;
@@ -30,7 +29,7 @@ public class TrackerMain extends JFrame implements Observer {
     private JPanel mainPanel;
     private JPanel smarmsPanel;
     private JPanel trackersPanel;
-    private String[] column_names_trackers= {"Id","Es Master","Ultima update", "Estado"};
+    private String[] column_names_trackers= {"Id","Es Master","Ultima update"};
     private DefaultTableModel table_model_trackers=new DefaultTableModel(column_names_trackers,10);
     private String column_names_smarms[]= {"Id","Tamaño en bytes","Pares conectados"};
     private DefaultTableModel table_model_smarms=new DefaultTableModel(column_names_smarms,10);
@@ -68,7 +67,7 @@ public class TrackerMain extends JFrame implements Observer {
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 TrackerService.getInstance().disconnect();
                 JMSManager.getInstance().close();
-                SQLiteUtil.removeDatabase();
+                SQLiteUtil.getInstance().removeDatabase();
             }
         });
         setContentPane(mainPanel);
@@ -77,7 +76,7 @@ public class TrackerMain extends JFrame implements Observer {
     public synchronized void actualizarInterfazTrackers(ConcurrentHashMap<String, TrackerKeepAlive> valores){
         table_model_trackers=new DefaultTableModel(column_names_trackers, 0);
         for(Map.Entry<String, TrackerKeepAlive> activeTracker : valores.entrySet()) {
-            String[] temp = {activeTracker.getValue().getId(), (activeTracker.getValue().isMaster())?"Si":"No", activeTracker.getValue().getLastKeepAlive().toString(), activeTracker.getValue().getConfirmacionActualizacion().toString() };
+            String[] temp = {activeTracker.getValue().getId(), (activeTracker.getValue().isMaster())?"Si":"No", activeTracker.getValue().getLastKeepAlive().toString()};
             table_model_trackers.addRow(temp);
         }
         tableTrackers.setModel(table_model_trackers);
@@ -85,7 +84,7 @@ public class TrackerMain extends JFrame implements Observer {
     }
     public synchronized void actualizarInterfazSwarms(){
         table_model_smarms = new DefaultTableModel(column_names_smarms, 0);
-        ArrayList<Smarms> valores = SQLiteUtil.listSmarm();
+        ArrayList<Smarms> valores = SQLiteUtil.getInstance().listSmarm();
         for(Smarms smarms: valores){
             String[] temp = {smarms.getHexInfoHash(), smarms.getTamanoEnBytes().toString(), String.valueOf(smarms.getNumeroPares())};
             table_model_smarms.addRow(temp);

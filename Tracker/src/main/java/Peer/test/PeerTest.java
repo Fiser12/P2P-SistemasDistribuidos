@@ -71,7 +71,7 @@ public class PeerTest {
                 case 1:
                     AnnounceResponse announceResponse = AnnounceResponse.parse(receiveData);
                     if(announceResponse.getBytes().length >= 16) {
-                        System.out.println("PEER: ANNOUNCE OK");
+                        System.out.println("PEER: ANNOUNCE OK LECHEERS: " + announceResponse.getLeechers() + "SEEDERS: " + announceResponse.getSeeders() + "NUMBER OF PEERS: " + announceResponse.getSeeders()+announceResponse.getLeechers() + "   " + announceResponse.getPeers().size());
                     }else{
                         System.err.println("PEER: ERROR ANNOUNCE");
                     }

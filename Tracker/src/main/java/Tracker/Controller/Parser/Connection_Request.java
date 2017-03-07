@@ -15,6 +15,7 @@ import java.util.Random;
 public class Connection_Request implements UDP_Message
 {
     private static Connection_Request instance;
+
     public static Connection_Request getInstance() {
         if(instance == null)
             instance = new Connection_Request();
@@ -28,7 +29,7 @@ public class Connection_Request implements UDP_Message
     {
         return request.getConnectionId() == Long.decode("0x41727101980");
     }
-    public byte[] sendResponse(BitTorrentUDPRequestMessage request, InetAddress clientAddress, int clientPort)
+    public synchronized byte[] sendResponse(BitTorrentUDPRequestMessage request, InetAddress clientAddress, int clientPort)
     {
         ConnectResponse response = new ConnectResponse();
         response.setTransactionId(request.getTransactionId());
@@ -40,12 +41,13 @@ public class Connection_Request implements UDP_Message
         peer.setIp(clientAddress.getHostAddress());
         peer.setConnectionId(new Long(randomInt));
         peer.setPort(clientPort);
-        ArrayList<Peer> peers = SQLiteUtil.listPeer();
+        ArrayList<Peer> peers = SQLiteUtil.getInstance().listPeer();
         for(Peer peerTemp: peers)
             if(peerTemp.getIdPeer()==request.getTransactionId()) {
-                return null;
+                response.setConnectionId(peerTemp.getConnectionId());
+                return response.getBytes();
             }
-        SQLiteUtil.saveData(peer);
+        SQLiteUtil.getInstance().saveData(peer, this);
         return response.getBytes();
     }
     public byte[] sendError(BitTorrentUDPRequestMessage request, String errorString)

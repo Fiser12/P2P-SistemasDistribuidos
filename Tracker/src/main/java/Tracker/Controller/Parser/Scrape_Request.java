@@ -25,7 +25,7 @@ public class Scrape_Request implements UDP_Message {
     }
     public boolean validate(BitTorrentUDPRequestMessage request, InetAddress clientAddress) {
         ScrapeRequest scrapeRequest = (ScrapeRequest) request;
-        List<Peer> peerList = SQLiteUtil.listPeer();
+        List<Peer> peerList = SQLiteUtil.getInstance().listPeer();
         boolean contains = false;
         Peer extract = null;
         for(Peer peer: peerList)
@@ -50,8 +50,8 @@ public class Scrape_Request implements UDP_Message {
         List<String> infoHashes = scrapeRequest.getInfoHashes();
         ScrapeInfo scrapeInfo;
         for ( String infoHash : infoHashes ) {
-            List<PeerSmarms> peerSmarmList = SQLiteUtil.listPeerSmarms();
-            List<Smarms> smarmsList = SQLiteUtil.listSmarm();
+            List<PeerSmarms> peerSmarmList = SQLiteUtil.getInstance().listPeerSmarms();
+            List<Smarms> smarmsList = SQLiteUtil.getInstance().listSmarm();
             scrapeInfo = sacarSeedersYLeechers(smarmsList, peerSmarmList, infoHash);
             scrapeResponse.addScrapeInfo(scrapeInfo);
             if ( scrapeResponse.getScrapeInfos().size() > 0 )
@@ -59,7 +59,7 @@ public class Scrape_Request implements UDP_Message {
             else
                 return sendError(request, "Error en el proceso de scrape");
         }
-        return null;
+        return sendError(request, "Error en el proceso de scrape");
     }
 
     private ScrapeInfo sacarSeedersYLeechers(List<Smarms> smarmsList, List<PeerSmarms> peerSmarmList, String infoHash)

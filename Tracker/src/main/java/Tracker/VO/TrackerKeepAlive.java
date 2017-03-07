@@ -2,6 +2,7 @@ package Tracker.VO;
 
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 
 public class TrackerKeepAlive implements Comparator<Object> {
 
@@ -10,7 +11,7 @@ public class TrackerKeepAlive implements Comparator<Object> {
     private boolean master;
     private boolean iAm;
 
-    private Estado confirmacionActualizacion;
+    private HashMap<String, Estado> confirmacionActualizacion = new HashMap<>();
 
     public String getId() {
         return id;
@@ -36,12 +37,12 @@ public class TrackerKeepAlive implements Comparator<Object> {
         this.master = master;
     }
 
-    public Estado getConfirmacionActualizacion() {
-        return confirmacionActualizacion;
+    public Estado getConfirmacionActualizacion(String id) {
+        return confirmacionActualizacion.get(id);
     }
 
-    public void setConfirmacionActualizacion(Estado confirmacionActualizacion) {
-        this.confirmacionActualizacion = confirmacionActualizacion;
+    public void setConfirmacionActualizacion(String id, Estado confirmacionActualizacion) {
+        this.confirmacionActualizacion.put(id ,confirmacionActualizacion);
     }
 
     @Override
@@ -69,5 +70,9 @@ public class TrackerKeepAlive implements Comparator<Object> {
 
     public void setiAm(boolean iAm) {
         this.iAm = iAm;
+    }
+
+    public void removeConfirmacionActualizacion(String idDatabase) {
+        confirmacionActualizacion.remove(idDatabase);
     }
 }
