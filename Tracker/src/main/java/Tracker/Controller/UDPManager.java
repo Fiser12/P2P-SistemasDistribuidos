@@ -89,7 +89,6 @@ public class UDPManager {
                     UDP_Message parser = prepararParser(value);
                     if(parser!=null){
                         BitTorrentUDPRequestMessage parsed = parser.parse(data);
-                        System.out.println(value);
                         if(parsed!=null){
                             boolean ok = parser.validate(parsed, clientAddress);
                             if (ok) {

@@ -206,7 +206,6 @@ public class SQLiteUtil {
                 } catch(ClassNotFoundException e){
                     e.printStackTrace();
                 } finally {
-                    System.out.println(lista.size() + " SQL:"+sql);
                     synchronized (SQLiteUtil.this) {
                         SQLiteUtil.this.notify();
                     }
@@ -237,6 +236,11 @@ public class SQLiteUtil {
                 for(String temp: listQuerys) {
                     ejecutarQuery(temp, TypeSQL.CHANGE, Peer.class);
                 }
+                Object notify = objectHashMap.get(idDatabase);
+                if(notify!=null)
+                    synchronized (notify) {
+                        notify.notify();
+                    }
                 stringHashMap.remove(idDatabase);
                 objectHashMap.remove(idDatabase);
             } catch (SQLException e) {

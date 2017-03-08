@@ -38,6 +38,11 @@ public class Announce_Request implements UDP_Message {
         peerSmarms.setPeer(peer);
         peerSmarms.setBytesDescargados(requestMesage.getDownloaded());
         SQLiteUtil.getInstance().saveData(peerSmarms, this);
+        try {
+            wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         List<PeerSmarms> peerSmarmList = SQLiteUtil.getInstance().listPeerSmarms();
         if (swarm != null) {
             AnnounceResponse announceResponse = sacarSeedersYLeechers(swarm, peerSmarmList);
