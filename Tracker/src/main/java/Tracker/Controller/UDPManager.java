@@ -21,7 +21,7 @@ public class UDPManager {
     private boolean udpServerAlive;
     private static UDPManager instance = null;
     private InetAddress inetAddress;
-    private static final long TIEMPO_SESION = 10*60 * 1000;
+    private static final long TIEMPO_SESION = 60 * 1000;
 
     private UDPManager() {
         this.udpServerAlive = true;

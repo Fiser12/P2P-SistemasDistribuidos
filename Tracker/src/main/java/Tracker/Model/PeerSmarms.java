@@ -3,13 +3,6 @@ package Tracker.Model;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "peer_smarmses")
-@AssociationOverrides({
-		@AssociationOverride(name = "pk.smarms", joinColumns = @JoinColumn(name = "SMARMS_ID")),
-		@AssociationOverride(name = "pk.peer", joinColumns = @JoinColumn(name = "PEER_ID")) })
 public class PeerSmarms implements java.io.Serializable, Observable {
 
 	private PeerSmarmsId pk = new PeerSmarmsId();
@@ -18,7 +11,6 @@ public class PeerSmarms implements java.io.Serializable, Observable {
 	public PeerSmarms() {
 	}
 
-	@EmbeddedId
 	public PeerSmarmsId getPk() {
 		return pk;
 	}
@@ -27,7 +19,6 @@ public class PeerSmarms implements java.io.Serializable, Observable {
 		this.pk = pk;
 	}
 
-	@Transient
 	public Peer getPeer() {
 		return getPk().getPeer();
 	}
@@ -36,7 +27,6 @@ public class PeerSmarms implements java.io.Serializable, Observable {
 		getPk().setPeer(peer);
 	}
 
-	@Transient
 	public Smarms getSmarms() {
 		return getPk().getSmarms();
 	}
@@ -45,7 +35,6 @@ public class PeerSmarms implements java.io.Serializable, Observable {
 		getPk().setSmarms(smarms);
 	}
 
-	@Column(name = "BYTES_DESCARGADOS", nullable = false)
 	public Long getBytesDescargados() {
 		return this.bytesDescargados;
 	}

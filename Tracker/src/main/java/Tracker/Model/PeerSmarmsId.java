@@ -2,16 +2,12 @@ package Tracker.Model;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javax.persistence.Embeddable;
-import javax.persistence.ManyToOne;
 
-@Embeddable
 public class PeerSmarmsId implements java.io.Serializable, Observable {
 
 	private Peer peer;
     private Smarms smarms;
 
-	@ManyToOne
 	public Peer getPeer() {
 		return peer;
 	}
@@ -20,7 +16,6 @@ public class PeerSmarmsId implements java.io.Serializable, Observable {
 		this.peer = peer;
 	}
 
-	@ManyToOne
 	public Smarms getSmarms() {
 		return smarms;
 	}
