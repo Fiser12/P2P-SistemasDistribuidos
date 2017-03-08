@@ -37,7 +37,11 @@ public class Announce_Request implements UDP_Message {
         peerSmarms.setSmarms(swarm);
         peerSmarms.setPeer(peer);
         peerSmarms.setBytesDescargados(requestMesage.getDownloaded());
-        SQLiteUtil.getInstance().saveData(peerSmarms, this);
+        try {
+            SQLiteUtil.getInstance().saveData(peerSmarms, this);
+        }catch(NullPointerException e){
+            return sendError(request, "Error en el proceso de announce, la sesión ha caducado");
+        }
         try {
             wait();
         } catch (InterruptedException e) {

@@ -5,9 +5,6 @@ import Tracker.View.TrackerMain;
 
 import java.util.UUID;
 
-/**
- * Created by Fiser on 21/10/16.
- */
 public class TrackerService {
     private TrackerMain ventana;
     private static TrackerService instance;

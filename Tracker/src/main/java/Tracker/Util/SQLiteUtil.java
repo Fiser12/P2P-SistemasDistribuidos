@@ -255,25 +255,25 @@ public class SQLiteUtil {
                 }
             }
     }
-    public void save(Smarms smarms, Object notify){
+    public void save(Smarms smarms, Object notify) throws NullPointerException{
         String id = getRandomStringID();
         stringHashMap.put(id, "INSERT INTO smarms (SMARMS_ID, hexInfoHash, SMARMS_TAMANO) values ('"+smarms.getHexInfoHash()+"','"+smarms.getHexInfoHash()+"',"+smarms.getTamanoEnBytes()+")");
         objectHashMap.put(id, notify);
         JMSManager.getInstance().solicitarCambioBBDD(id);
     }
-    public void save(Peer peer, Object notify){
+    public void save(Peer peer, Object notify) throws NullPointerException{
         String id = getRandomStringID();
         stringHashMap.put(id, "INSERT INTO peer (PEER_ID, connectionId, PEER_IP, PEER_PORT) values ("+peer.getIdPeer()+","+peer.getConnectionId()+",'"+peer.getIp()+"',"+peer.getPort().intValue()+")");
         objectHashMap.put(id, notify);
         JMSManager.getInstance().solicitarCambioBBDD(id);
     }
-    public void save(PeerSmarms peerSmarms, Object notify){
+    public void save(PeerSmarms peerSmarms, Object notify) throws NullPointerException{
         String id = getRandomStringID();
         stringHashMap.put(id, "INSERT INTO peer_smarmses (PEER_ID, SMARMS_ID, BYTES_DESCARGADOS) values ("+peerSmarms.getPeer().getIdPeer()+",'"+peerSmarms.getSmarms().getSmarmsId()+"',"+peerSmarms.getBytesDescargados()+")");
         objectHashMap.put(id, notify);
         JMSManager.getInstance().solicitarCambioBBDD(id);
     }
-    public void saveData(Object obj, Object notify){
+    public void saveData(Object obj, Object notify) throws NullPointerException{
         if(obj instanceof Smarms)
             save((Smarms)obj, notify);
         else if(obj instanceof Peer)
