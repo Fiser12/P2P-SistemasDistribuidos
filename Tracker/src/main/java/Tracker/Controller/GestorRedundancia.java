@@ -128,7 +128,7 @@ public class GestorRedundancia extends Observable implements Runnable, MessageLi
                 }
             }
         }
-        if(!masterEncontrado) {
+        if(!masterEncontrado&&!TrackerService.getInstance().getTracker().isMaster()) {
             TrackerService.getInstance().getTracker().setMaster(true);
             cargarBBDD();
         }

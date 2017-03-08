@@ -116,7 +116,7 @@ public class SQLiteUtil {
     public ArrayList<PeerSmarms> listPeerSmarms(){
         ArrayList<PeerSmarms> lista = new ArrayList<>();
         try {
-            lista = ejecutarQuery("SELECT * FROM peer_smarmses", TypeSQL.SELECT, PeerSmarms.class);
+            lista = ejecutarQuery("SELECT peer.*, smarms.*, peer_smarmses.BYTES_DESCARGADOS FROM peer_smarmses, peer, smarms WHERE peer_smarmses.PEER_ID = peer.PEER_ID AND peer_smarmses.SMARMS_ID = smarms.SMARMS_ID", TypeSQL.SELECT, PeerSmarms.class);
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -157,8 +157,17 @@ public class SQLiteUtil {
     }
     private PeerSmarms extractPeerSmarmsFromResultSet(ResultSet result) throws SQLException {
         PeerSmarms peerSmarms = new PeerSmarms();
-        peerSmarms.setPeer(getData(String.valueOf(result.getLong("PEER_ID")), Peer.class));
-        peerSmarms.setSmarms(getData(result.getString("SMARMS_ID"), Smarms.class));
+        Peer peer = new Peer();
+        peer.setIdPeer(result.getLong("PEER_ID"));
+        peer.setConnectionId(result.getLong("connectionId"));
+        peer.setIp(result.getString("PEER_IP"));
+        peer.setPort(result.getInt("PEER_PORT"));
+        Smarms smarms = new Smarms();
+        smarms.setSmarmsId(result.getString("SMARMS_ID"));
+        smarms.setHexInfoHash(result.getString("hexInfoHash"));
+        smarms.setTamanoEnBytes(result.getInt("SMARMS_TAMANO"));
+        peerSmarms.setPeer(peer);
+        peerSmarms.setSmarms(smarms);
         peerSmarms.setBytesDescargados(result.getLong("BYTES_DESCARGADOS"));
         return peerSmarms;
     }
@@ -208,7 +217,9 @@ public class SQLiteUtil {
                             statement.close();
                         if(connect!=null)
                             connect.close();
-                    }catch(Exception ignored){}
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -225,10 +236,6 @@ public class SQLiteUtil {
                 ArrayList<String> listQuerys = new ArrayList(Arrays.asList(stringHashMap.get(idDatabase).split(";")));
                 for(String temp: listQuerys) {
                     ejecutarQuery(temp, TypeSQL.CHANGE, Peer.class);
-                }
-                Object notify = objectHashMap.get(idDatabase);
-                synchronized (objectHashMap.get(idDatabase)) {
-                    objectHashMap.get(idDatabase).notify();
                 }
                 stringHashMap.remove(idDatabase);
                 objectHashMap.remove(idDatabase);

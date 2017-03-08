@@ -21,7 +21,7 @@ public class UDPManager {
     private boolean udpServerAlive;
     private static UDPManager instance = null;
     private InetAddress inetAddress;
-    private static final long TIEMPO_SESION = 60 * 1000;
+    private static final long TIEMPO_SESION = 10*60 * 1000;
 
     private UDPManager() {
         this.udpServerAlive = true;
@@ -89,6 +89,7 @@ public class UDPManager {
                     UDP_Message parser = prepararParser(value);
                     if(parser!=null){
                         BitTorrentUDPRequestMessage parsed = parser.parse(data);
+                        System.out.println(value);
                         if(parsed!=null){
                             boolean ok = parser.validate(parsed, clientAddress);
                             if (ok) {
