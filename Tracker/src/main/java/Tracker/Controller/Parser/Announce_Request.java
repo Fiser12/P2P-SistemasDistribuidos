@@ -65,7 +65,8 @@ public class Announce_Request implements UDP_Message {
                     else
                         leecher.add(temp);
                     PeerInfo peerInfo = new PeerInfo();
-                    peerInfo.setIpAddress(Integer.parseInt(temp.getPeer().getIp().replace(".", "")));
+                    //TODO No va el envio de los peerInfo bien, el resto si
+                    peerInfo.setIpAddress(Integer.parseInt(temp.getPeer().getIp()));
                     peerInfo.setPort(temp.getPeer().getPort());
                     peerInfoList.add(peerInfo);
                 }
@@ -76,7 +77,6 @@ public class Announce_Request implements UDP_Message {
         announceResponse.setPeers(peerInfoList);
         return announceResponse;
     }
-
     public byte[] sendError(BitTorrentUDPRequestMessage request, String errorString) {
         if(TrackerService.getInstance().getTracker().isMaster()) {
             Error error = new Error();
