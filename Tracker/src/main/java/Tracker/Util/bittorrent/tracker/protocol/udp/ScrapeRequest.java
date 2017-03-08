@@ -2,6 +2,7 @@ package Tracker.Util.bittorrent.tracker.protocol.udp;
 
 import Tracker.Util.bittorrent.util.StringUtils;
 
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class ScrapeRequest extends BitTorrentUDPRequestMessage {
 
         for (String infoHash : this.infoHashes) {
             byteBuffer.position(start);
-            byteBuffer.put(infoHash.getBytes());
+            byteBuffer.put(new BigInteger(infoHash,16).toByteArray());
             start += hashSize;
         }
         return byteBuffer.array();

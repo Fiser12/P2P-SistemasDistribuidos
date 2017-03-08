@@ -66,7 +66,7 @@ public class Announce_Request implements UDP_Message {
                         leecher.add(temp);
                     PeerInfo peerInfo = new PeerInfo();
                     //TODO No va el envio de los peerInfo bien, el resto si
-                    peerInfo.setIpAddress(Integer.parseInt(temp.getPeer().getIp()));
+                    peerInfo.setIpAddress(Integer.parseInt(temp.getPeer().getIp().replace(".","")));
                     peerInfo.setPort(temp.getPeer().getPort());
                     peerInfoList.add(peerInfo);
                 }

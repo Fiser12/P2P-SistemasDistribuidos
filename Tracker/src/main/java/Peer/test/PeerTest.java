@@ -72,6 +72,11 @@ public class PeerTest {
                     AnnounceResponse announceResponse = AnnounceResponse.parse(receiveData);
                     if(announceResponse.getBytes().length >= 16) {
                         System.out.println("PEER: ANNOUNCE OK LECHEERS: " + announceResponse.getLeechers() + "SEEDERS: " + announceResponse.getSeeders() + "NUMBER OF PEERS: " + announceResponse.getSeeders()+announceResponse.getLeechers() + "   " + announceResponse.getPeers().size());
+                        //try {
+                            //scrapeRequestTest(datagramSocket, trackerHost);
+                        //} catch (IOException ignored) {
+                        //}
+                        //TODO: NO VA EL SCRAPE BIEN POR LA CONVERSION DEL HEX
                     }else{
                         System.err.println("PEER: ERROR ANNOUNCE");
                     }
@@ -114,8 +119,6 @@ public class PeerTest {
             }
         };
     }
-
-
     private void announceRequestTest(DatagramSocket datagramSocket, InetAddress trackerHost, AnnounceRequest.Event requestedEvent) throws IOException {
         AnnounceRequest request = new AnnounceRequest();
         request.setConnectionId(connectResponse.getConnectionId());
@@ -139,5 +142,14 @@ public class PeerTest {
         System.out.println("Announce mandado a " + trackerHost.getHostAddress());
         datagramSocket.send(packet);
     }
-
+    private void scrapeRequestTest(DatagramSocket datagramSocket, InetAddress trackerHost) throws IOException {
+        ScrapeRequest request = new ScrapeRequest();
+        request.setConnectionId(connectResponse.getConnectionId() );
+        request.setTransactionId(connectResponse.getTransactionId());
+        request.addInfoHash("014245AE00000000000000000000000000000000");
+        byte[] requestBytes = request.getBytes();
+        DatagramPacket packet = new DatagramPacket(requestBytes, requestBytes.length, trackerHost, port);
+        System.out.println("Announce mandado a " + trackerHost.getHostAddress());
+        datagramSocket.send(packet);
+    }
 }
